@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flagship Group - Entreprendre pour changer Haïti</title>
+    <meta name="description" content="Nous accompagnons les jeunes entrepreneurs haïtiens pour transformer le pays grâce à l'entrepreneuriat social.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                        'serif': ['Playfair Display', 'serif']
+                    },
+                    colors: {
+                        'flagship-blue': '#0066CC',
+                        'flagship-light': '#E6F3FF',
+                        'flagship-dark': '#003366'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Custom styles pour les animations et effets */
+       
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #0066CC, #003366);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .header-scrolled {
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .quote-clip {
+            clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%);
+        }
+        
+        /* Animation du header */
+        @keyframes headerSlideDown {
+            from {
+                transform: translateY(-100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+        
+        .header-animate {
+            animation: headerSlideDown 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+
+<body class="font-sans text-gray-900 leading-relaxed">
+    
+    <!-- Header Sticky -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-800 transition-all duration-300 shadow-xl" id="header">
+    <nav class="container mx-auto px-4 lg:px-8">
+        <div class="flex items-center justify-between h-16 lg:h-20">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3 group">
+                <div class="w-20 h-10  rounded-lg flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300">
+                  <img src="image.png" style="width: 55px; height: 55px;" alt="">
+                </div>
+            
+            </div>
+            
+            <!-- Menu Desktop -->
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="#accueil" class="text-black hover:text-blue transition-colors font-medium relative group">
+                    Accueil
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-flagship-blue transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#apropos" class="text-black hover:text-blue transition-colors font-medium relative group">
+                    À propos
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-flagship-blue transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#services" class="text-black hover:text-blue transition-colors font-medium relative group">
+                    Services
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-flagship-blue transition-all duration-300 group-hover:w-full"></span>
+                </a>
+               
+                <a href="#temoignages" class="text-black hover:text-blue transition-colors font-medium relative group">
+                    Témoignages
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-flagship-blue transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#contact" class="text-black hover:text-blue transition-colors font-medium relative group">
+                    Contact
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-flagship-blue transition-all duration-300 group-hover:w-full"></span>
+                </a>
+            </div>
+            
+            <!-- CTA Button -->
+            <div class="hidden lg:flex items-center space-x-4">
+                <a href="#contact">
+                <button class="bg-flagship-blue text-white px-6 py-2 rounded-lg hover:bg-flagship-dark transition-all duration-300 font-medium transform hover:-translate-y-0.5 shadow-md hover:shadow-lg">
+                    Réserver une session
+                </button>
+                </a>
+            </div>
+            
+            <!-- Menu Mobile -->
+            <button class="lg:hidden text-gray-300 focus:outline-none" id="mobile-menu-btn">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+    </nav>
+    
+    <!-- Menu Mobile Overlay -->
+    <div class="lg:hidden fixed inset-0 bg-gray-900 transform translate-x-full transition-transform duration-300 ease-in-out z-40" id="mobile-menu">
+        <div class="p-6 h-full flex flex-col">
+            <div class="flex justify-between items-center mb-8">
+                <div class="flex items-center space-x-3">
+                   
+                    <span class="font-serif font-bold text-xl text-white">Flagship Group</span>
+                </div>
+                <button id="mobile-menu-close" class="focus:outline-none text-gray-300 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <nav class="flex-1 space-y-6">
+                <a href="#accueil" class="block text-lg font-medium text-gray-300 hover:text-white transition-colors py-2 border-b border-gray-800">Accueil</a>
+                <a href="#apropos" class="block text-lg font-medium text-gray-300 hover:text-white transition-colors py-2 border-b border-gray-800">À propos</a>
+                <a href="#services" class="block text-lg font-medium text-gray-300 hover:text-white transition-colors py-2 border-b border-gray-800">Services</a>
+               
+                <a href="#temoignages" class="block text-lg font-medium text-gray-300 hover:text-white transition-colors py-2 border-b border-gray-800">Témoignages</a>
+                <a href="#contact" class="block text-lg font-medium text-gray-300 hover:text-white transition-colors py-2 border-b border-gray-800">Contact</a>
+            </nav>
+            <div class="pt-6 border-t border-gray-800">
+                <a href="#contact">
+                <button class="w-full bg-flagship-blue text-white px-6 py-3 rounded-lg font-medium hover:bg-flagship-dark transition-colors shadow-md">
+                    Réserver une session
+                </button>
+                </a>
+            </div>
+        </div>
+    </div>
+</header>
+    <!-- Hero Section -->
+    <section id="accueil" class="relative min-h-screen flex items-center bg-gradient-to-br from-flagship-light to-white  pt-16">
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-white to-transparent z-10"></div>
+            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80')] bg-cover bg-center opacity-10"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 lg:px-8 pt-20 relative z-20">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-8">
+                    <div class="fade-in">
+                        <h1 class="text-4xl lg:text-6xl font-serif font-bold leading-tight">
+                            Nous accompagnons <span class="text-gradient">les jeunes</span> pour transformer le pays
+                        </h1>
+                    </div>
+                    <div class="fade-in">
+                        <p class="text-xl text-gray-600 leading-relaxed">
+                            Grâce à l'entrepreneuriat social, nous construisons une jeunesse active, indépendante et engagée pour un Haïti prospère.
+                        </p>
+                    </div>
+                    <div class="fade-in flex flex-col sm:flex-row gap-4">
+                        <button class="bg-flagship-blue text-white px-8 py-4 rounded-lg hover:bg-flagship-dark transition-all duration-300 font-medium text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                            <i class="fas fa-play mr-2"></i>
+                            Découvrir nos programmes
+                        </button>
+                        <button class="border-2 border-flagship-blue text-flagship-blue px-8 py-4 rounded-lg hover:bg-flagship-blue hover:text-white transition-all duration-300 font-medium text-lg shadow-md hover:shadow-lg">
+                            <i class="fas fa-users mr-2"></i>
+                            Rejoindre notre réseau
+                        </button>
+                    </div>
+                </div>
+                <div class="fade-in">
+                    <div class="relative">
+                        <div class="w-full h-96 bg-gradient-to-br from-flagship-blue to-flagship-dark rounded-2xl shadow-2xl overflow-hidden">
+                            <div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+                                <div class="text-white text-center">
+                                    <i class="fas fa-play-circle text-6xl mb-4 opacity-80 hover:opacity-100 transition-opacity cursor-pointer"></i>
+                                    <p class="text-lg font-medium">Vidéo de présentation</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Stats flottantes -->
+                        <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-xl hover:shadow-2xl transition-shadow">
+                            <div class="text-3xl font-bold text-flagship-blue">500+</div>
+                            <div class="text-sm text-gray-600">Jeunes formés</div>
+                        </div>
+                        <div class="absolute -top-6 -right-6 bg-white p-6 rounded-xl shadow-xl hover:shadow-2xl transition-shadow">
+                            <div class="text-3xl font-bold text-flagship-blue">50+</div>
+                            <div class="text-sm text-gray-600">Conférences</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission/Vision Section -->
+    <section id="apropos" class="py-20 bg-white relative z-10">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-3xl lg:text-4xl font-serif font-bold mb-6">Pourquoi Flagship existe</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                    Notre mission est de créer un mouvement d'entrepreneurs sociaux qui transforment Haïti par l'innovation, la formation et l'engagement communautaire.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 mb-16">
+                <div class="text-center fade-in card-hover bg-gray-50 p-8 rounded-xl">
+                    <div class="w-16 h-16 bg-flagship-blue rounded-full flex items-center justify-center mx-auto mb-6 transform hover:rotate-12 transition-transform">
+                        <i class="fas fa-lightbulb text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-serif font-semibold mb-4">Innovation</h3>
+                    <p class="text-gray-600">Nous encourageons les solutions créatives aux défis sociaux d'Haïti</p>
+                </div>
+                
+                <div class="text-center fade-in card-hover bg-gray-50 p-8 rounded-xl">
+                    <div class="w-16 h-16 bg-flagship-blue rounded-full flex items-center justify-center mx-auto mb-6 transform hover:rotate-12 transition-transform">
+                        <i class="fas fa-graduation-cap text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-serif font-semibold mb-4">Formation</h3>
+                    <p class="text-gray-600">Des programmes d'incubation et formations gratuites pour tous</p>
+                </div>
+                
+                <div class="text-center fade-in card-hover bg-gray-50 p-8 rounded-xl">
+                    <div class="w-16 h-16 bg-flagship-blue rounded-full flex items-center justify-center mx-auto mb-6 transform hover:rotate-12 transition-transform">
+                        <i class="fas fa-heart text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-serif font-semibold mb-4">Impact</h3>
+                    <p class="text-gray-600">Mesurer notre succès par l'impact positif sur la communauté</p>
+                </div>
+            </div>
+            
+            <div class="fade-in bg-gradient-to-r from-flagship-blue to-flagship-dark rounded-2xl p-8 lg:p-12 text-white">
+                <div class="grid lg:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-2xl lg:text-3xl font-serif font-bold mb-6">Notre vision pour Haïti</h3>
+                        <p class="text-lg mb-6">Nous croyons en une Haïti où chaque jeune a les moyens de réaliser son potentiel entrepreneurial et de contribuer au développement du pays.</p>
+                        <button class="bg-white text-flagship-blue px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+                            En savoir plus sur notre vision
+                        </button>
+                    </div>
+                    <div class="hidden lg:block">
+                        <div class="bg-white bg-opacity-20 rounded-xl p-6 backdrop-blur-sm">
+                            <div class="flex items-start space-x-4">
+                                <div class="text-4xl text-white opacity-80">
+                                    <i class="fas fa-quote-left"></i>
+                                </div>
+                                <div>
+                                    <p class="text-lg italic mb-4">"Le changement commence par l'action. Chez Flagship, nous transformons les idées en solutions concrètes pour Haïti."</p>
+                                    <p class="font-medium">— Équipe Flagship</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-center mb-12">Nos Réalisations</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+      <!-- Image 1 -->
+      <div class="group overflow-hidden rounded-xl shadow-md">
+        <img src="image1.jpg" alt="Projet Tech" 
+             class="w-full h-full object-cover transform group-hover:scale-105 transition duration-300 ease-in-out">
+      </div>
+
+      <!-- Image 2 -->
+      <div class="group overflow-hidden rounded-xl shadow-md">
+        <img src="image2.jpg" alt="Projet Design" 
+             class="w-full h-full object-cover transform group-hover:scale-105 transition duration-300 ease-in-out">
+      </div>
+
+      <!-- Image 3 -->
+      <div class="group overflow-hidden rounded-xl shadow-md">
+        <img src="image3.jpg" alt="Projet Startup" 
+             class="w-full h-full object-cover transform group-hover:scale-105 transition duration-300 ease-in-out">
+      </div>
+
+      <!-- Image 4 -->
+      <div class="group overflow-hidden rounded-xl shadow-md">
+        <img src="image4.jpg" alt="Projet Business" 
+             class="w-full h-full object-cover transform group-hover:scale-105 transition duration-300 ease-in-out">
+      </div>
+
+      <!-- Image 5 -->
+      <div class="group overflow-hidden rounded-xl shadow-md">
+        <img src="image5.jpg" alt="Projet Innovation" 
+             class="w-full h-full object-cover transform group-hover:scale-105 transition duration-300 ease-in-out">
+      </div>
+    </div>
+  </section>
+    <!-- Services Section -->
+    <section id="services" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-3xl lg:text-4xl font-serif font-bold mb-6">Nos Services</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Découvrez comment nous accompagnons les jeunes entrepreneurs dans leur parcours
+                </p>
+            </div>
+            
+            <div class="grid lg:grid-cols-3 gap-8">
+                <div class="bg-white rounded-2xl p-8 card-hover fade-in shadow-lg">
+                    <div class="w-12 h-12 bg-flagship-blue rounded-lg flex items-center justify-center mb-6 transform hover:rotate-12 transition-transform">
+                        <i class="fas fa-rocket text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-serif font-semibold mb-4">Programmes d'incubation</h3>
+                    <p class="text-gray-600 mb-6">Accompagnement personnalisé pour développer votre projet entrepreneurial de A à Z.</p>
+                    <button class="text-flagship-blue font-medium hover:underline flex items-center">
+                        En savoir plus <i class="fas fa-arrow-right ml-1 transition-transform group-hover:translate-x-1"></i>
+                    </button>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-8 card-hover fade-in shadow-lg">
+                    <div class="w-12 h-12 bg-flagship-blue rounded-lg flex items-center justify-center mb-6 transform hover:rotate-12 transition-transform">
+                        <i class="fas fa-graduation-cap text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-serif font-semibold mb-4">Formations gratuites</h3>
+                    <p class="text-gray-600 mb-6">Sessions en ligne et présentiel sur l'entrepreneuriat, le leadership et l'innovation.</p>
+                    <button class="text-flagship-blue font-medium hover:underline flex items-center">
+                        En savoir plus <i class="fas fa-arrow-right ml-1 transition-transform group-hover:translate-x-1"></i>
+                    </button>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-8 card-hover fade-in shadow-lg">
+                    <div class="w-12 h-12 bg-flagship-blue rounded-lg flex items-center justify-center mb-6 transform hover:rotate-12 transition-transform">
+                        <i class="fas fa-microphone text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-serif font-semibold mb-4">Séminaires et conférences</h3>
+                    <p class="text-gray-600 mb-6">Événements inspirants avec des leaders et entrepreneurs à succès.</p>
+                    <button class="text-flagship-blue font-medium hover:underline flex items-center">
+                        En savoir plus <i class="fas fa-arrow-right ml-1 transition-transform group-hover:translate-x-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Citation/Idée du jour -->
+    <section class="py-20 bg-flagship-blue relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 left-10 text-8xl">
+                <i class="fas fa-quote-left"></i>
+            </div>
+            <div class="absolute bottom-10 right-10 text-8xl">
+                <i class="fas fa-quote-right"></i>
+            </div>
+        </div>
+        <div class="container mx-auto px-4 lg:px-8 text-center relative z-10">
+            <div class="max-w-4xl mx-auto fade-in">
+                <h2 class="text-3xl lg:text-4xl font-serif font-bold text-white mb-8">
+                    "Entreprendre pour changer Haïti, pas pour devenir riche"
+                </h2>
+                <p class="text-xl text-blue-100 mb-8">
+                    Notre philosophie guide chaque action, chaque décision, chaque projet que nous soutenons.
+                </p>
+                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-6 inline-block hover:bg-opacity-30 transition-all">
+                    <p class="text-white font-medium">— Slogan de Flagship Group</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Témoignages -->
+    <section id="temoignages" class="py-20 bg-white">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-3xl lg:text-4xl font-serif font-bold mb-6">Ce qu'ils disent de nous</h2>
+                <p class="text-xl text-gray-600">Les témoignages de notre communauté</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-gray-50 rounded-2xl p-8 card-hover fade-in">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-flagship-blue rounded-full flex items-center justify-center mr-4">
+                            <span class="text-white font-semibold">MJ</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Marie Joseph</h4>
+                            <p class="text-sm text-gray-600">Port-au-Prince</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 italic">
+                        "Grâce aux formations de Flagship, j'ai pu lancer mon entreprise sociale. L'accompagnement est exceptionnel !"
+                    </p>
+                    <div class="mt-4 text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 rounded-2xl p-8 card-hover fade-in">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-flagship-blue rounded-full flex items-center justify-center mr-4">
+                            <span class="text-white font-semibold">PL</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Pierre Louis</h4>
+                            <p class="text-sm text-gray-600">Cap-Haïtien</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 italic">
+                        "Une organisation qui change vraiment les mentalités. Je recommande à tous les jeunes entrepreneurs."
+                    </p>
+                    <div class="mt-4 text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 rounded-2xl p-8 card-hover fade-in">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-flagship-blue rounded-full flex items-center justify-center mr-4">
+                            <span class="text-white font-semibold">AS</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Anne Sophie</h4>
+                            <p class="text-sm text-gray-600">Les Cayes</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 italic">
+                        "Les conférences sont inspirantes et les outils pratiques m'ont beaucoup aidée dans mon parcours."
+                    </p>
+                    <div class="mt-4 text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <div class="fade-in">
+                    <h2 class="text-3xl lg:text-4xl font-serif font-bold mb-6">Restez connecté</h2>
+                    <p class="text-xl text-gray-600 mb-12">
+                        Recevez nos dernières actualités, conseils et opportunités directement dans votre boîte mail
+                    </p>
+                    
+                    <div class="bg-white rounded-2xl p-8 shadow-xl max-w-2xl mx-auto">
+                        <form class="space-y-6" id="newsletter-form">
+                            <div class="grid sm:grid-cols-2 gap-4">
+                                <input 
+                                    type="text" 
+                                    placeholder="Votre prénom" 
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-flagship-blue transition-colors"
+                                    required
+                                >
+                                <input 
+                                    type="email" 
+                                    placeholder="Votre email" 
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-flagship-blue transition-colors"
+                                    required
+                                >
+                            </div>
+                            <button 
+                                type="submit" 
+                                class="w-full bg-flagship-blue text-white px-8 py-4 rounded-lg hover:bg-flagship-dark transition-colors font-medium text-lg shadow-md hover:shadow-lg"
+                            >
+                                <i class="fas fa-paper-plane mr-2"></i>
+                                S'abonner à la newsletter
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="py-20 bg-flagship-blue">
+        <div class="container mx-auto px-4 lg:px-8 text-center">
+            <div class="fade-in">
+                <h2 class="text-3xl lg:text-4xl font-serif font-bold text-white mb-6">
+                    Prêt(e) à entreprendre pour changer Haïti ?
+                </h2>
+                <p class="text-xl text-blue-100 mb-12 max-w-2xl mx-auto">
+                    Rejoignez notre communauté d'entrepreneurs sociaux et commencez votre transformation dès aujourd'hui
+                </p>
+                <button class="bg-white text-flagship-blue px-12 py-4 rounded-lg hover:bg-gray-100 transition-colors font-medium text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                    <i class="fas fa-rocket mr-2"></i>
+                    Commencer maintenant
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-white">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12">
+                <div class="fade-in">
+                    <h2 class="text-3xl lg:text-4xl font-serif font-bold mb-6">Contactez-nous</h2>
+                    <p class="text-xl text-gray-600 mb-8">
+                        Une question ? Un projet ? N'hésitez pas à nous contacter, nous serions ravis d'échanger avec vous.
+                    </p>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-flagship-blue rounded-lg flex items-center justify-center mr-4 transform hover:rotate-12 transition-transform">
+                                <i class="fas fa-envelope text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Email</h4>
+                                <p class="text-gray-600">contact@flagshipgroup.org</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-flagship-blue rounded-lg flex items-center justify-center mr-4 transform hover:rotate-12 transition-transform">
+                                <i class="fas fa-map-marker-alt text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Adresse</h4>
+                                <p class="text-gray-600">Saint Marc, Haïti</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-flagship-blue rounded-lg flex items-center justify-center mr-4 transform hover:rotate-12 transition-transform">
+                                <i class="fas fa-phone-alt text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Téléphone</h4>
+                                <p class="text-gray-600">+509 3806-8099</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="fade-in">
+                    <form class="bg-gray-50 rounded-2xl p-8 space-y-6" id="contact-form">
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <input 
+                                type="text" 
+                                placeholder="Nom" 
+                                class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-flagship-blue transition-colors"
+                                required
+                            >
+                            <input 
+                                type="email" 
+                                placeholder="Email" 
+                                class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-flagship-blue transition-colors"
+                                required
+                            >
+                        </div>
+                        <input 
+                            type="text" 
+                            placeholder="Objet" 
+                            class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-flagship-blue transition-colors"
+                            required
+                        >
+                        <textarea 
+                            placeholder="Votre message" 
+                            rows="6" 
+                            class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-flagship-blue transition-colors resize-none"
+                            required
+                        ></textarea>
+                        <button 
+                            type="submit" 
+                            class="w-full bg-flagship-blue text-white px-8 py-4 rounded-lg hover:bg-flagship-dark transition-colors font-medium shadow-md hover:shadow-lg"
+                        >
+                            <i class="fas fa-paper-plane mr-2"></i>
+                            Envoyer le message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+ <section id="aProposEcoleZed456" class="bg-gray-50 py-20">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      
+      <!-- Titre & Introduction -->
+      <div class="text-center mb-16">
+        <h2 class="text-4xl font-extrabold text-gray-900">À propos de notre établissement</h2>
+        <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+          Notre école offre un enseignement d'excellence, encadré par une équipe pédagogique engagée à construire
+          un avenir brillant pour chaque élève.
+        </p>
+      </div>
+
+      <!-- Membres de l'équipe -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+        
+        <!-- Membre 1 -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 text-center p-8">
+          <img class="mx-auto h-32 w-32 rounded-full object-cover border-4 border-blue-500 shadow-md" 
+               src="img1millin.jpeg" alt="Directeur">
+          <h3 class="mt-6 text-xl font-semibold text-gray-900">Millien Lucson </h3>
+          <p class="mt-1 text-blue-600 font-medium">PDG et Co-Fondateur</p>
+          <p class="mt-4 text-gray-500 text-sm">
+           Diplôme en Gestion des projets, Gestion des ressources humaines entreprenariat ,commerce,technique Bancaire et Marketings 
+Certifié en Gestion financière
+          </p>
+        </div>
+
+        <!-- Membre 2 -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 text-center p-8">
+          <img class="mx-auto h-32 w-32 rounded-full object-cover border-4 border-blue-500 shadow-md" 
+               src="img3milllien.jpeg" alt="Enseignante">
+          <h3 class="mt-6 text-xl font-semibold text-gray-900">Elan Vanessa </h3>
+          <p class="mt-1 text-blue-600 font-medium">Ingénieur civil</p>
+          <p class="mt-4 text-gray-500 text-sm">
+            Responsable Ressources Humaines
+          </p>
+        </div>
+
+        <!-- Membre 3 -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 text-center p-8">
+          <img class="mx-auto h-32 w-32 rounded-full object-cover border-4 border-blue-500 shadow-md" 
+               src="img4millien.jpeg" alt="Coordinateur pédagogique">
+          <h3 class="mt-6 text-xl font-semibold text-gray-900">DALIEN Anicia </h3>
+          <p class="mt-1 text-blue-600 font-medium">Co-Fondateur</p>
+          <p class="mt-4 text-gray-500 text-sm">
+      Membre observatrice
+          </p>
+        </div>
+
+          <!-- Membre 4 -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 text-center p-8">
+          <img class="mx-auto h-32 w-32 rounded-full object-cover border-4 border-blue-500 shadow-md" 
+               src="img5millien.jpeg" alt="Enseignante">
+          <h3 class="mt-6 text-xl font-semibold text-gray-900">SIMONVIL Wadlin </h3>
+          <p class="mt-1 text-blue-600 font-medium">Co-fondateur</p>
+          <p class="mt-4 text-gray-500 text-sm">
+           Membre observateur
+          </p>
+        </div>
+
+        <!-- Membre 5 -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 text-center p-8">
+          <img class="mx-auto h-32 w-32 rounded-full object-cover border-4 border-blue-500 shadow-md" 
+               src="img2millien.jpeg" alt="Coordinateur pédagogique">
+          <h3 class="mt-6 text-xl font-semibold text-gray-900">SIMAIL Linda  </h3>
+          <p class="mt-1 text-blue-600 font-medium">Secrétaire </p>
+          <p class="mt-4 text-gray-500 text-sm">
+          Juriste et coach en art Oratoire
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+    <!-- Footer -->
+    <footer class="bg-flagship-dark text-white py-16">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <div class="col-span-2">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center transform hover:rotate-12 transition-transform">
+                            <img src="image.png" alt="">
+                        </div>
+                        <div>
+                            <h3 class="font-serif font-bold text-2xl">Flagship Group</h3>
+                            <p class="text-sm text-gray-300">Entreprendre pour changer Haïti</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-6 max-w-md">
+                        Nous accompagnons les jeunes entrepreneurs haïtiens pour transformer le pays grâce à l'entrepreneuriat social.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-flagship-blue transition-colors transform hover:-translate-y-1">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-flagship-blue transition-colors transform hover:-translate-y-1">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-flagship-blue transition-colors transform hover:-translate-y-1">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-flagship-blue transition-colors transform hover:-translate-y-1">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-lg mb-6">Liens rapides</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#accueil" class="text-gray-300 hover:text-white transition-colors">Accueil</a></li>
+                        <li><a href="#apropos" class="text-gray-300 hover:text-white transition-colors">À propos</a></li>
+                        <li><a href="#services" class="text-gray-300 hover:text-white transition-colors">Services</a></li>
+                       
+                        <li><a href="#contact" class="text-gray-300 hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-lg mb-6">Services</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Incubation</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Formations</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Conférences</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Membres</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Réservation</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-300 text-sm mb-4 md:mb-0">
+                        © 2025 Flagship Group. Tous droits réservés.
+                    </p>
+                    <div class="flex space-x-6 text-sm">
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">Mentions légales</a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">Politique de confidentialité</a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">CGU</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chat Widget Flottant -->
+   
+
+    <!-- JavaScript -->
+<script>
+        // Variables globales
+        let isScrolled = false;
+        
+        // Gestion du header sticky
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            const scrolled = window.scrollY > 50;
+            
+            if (scrolled !== isScrolled) {
+                isScrolled = scrolled;
+                if (isScrolled) {
+                    header.classList.add('header-scrolled');
+                } else {
+                    header.classList.remove('header-scrolled');
+                }
+            }
+        });
+        
+        // Menu mobile
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuClose = document.getElementById('mobile-menu-close');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.remove('translate-x-full');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        mobileMenuClose.addEventListener('click', () => {
+            mobileMenu.classList.add('translate-x-full');
+            document.body.style.overflow = '';
+        });
+        
+        // Fermer le menu mobile lors du clic sur un lien
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('translate-x-full');
+                document.body.style.overflow = '';
+            });
+        });
+        
+        // Smooth scroll pour les liens d'ancrage
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const headerHeight = document.getElementById('header').offsetHeight;
+                    const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Animations d'apparition au scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.remove('fade-in');
+                    
+                    // Animation avec Anime.js
+                    anime({
+                        targets: entry.target,
+                        opacity: [0, 1],
+                        translateY: [30, 0],
+                        duration: 800,
+                        easing: 'easeOutQuart'
+                    });
+                    
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        
+        // Observer tous les éléments avec la classe fade-in
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Animation du hero au chargement
+        window.addEventListener('load', () => {
+            const heroElements = document.querySelectorAll('#accueil .fade-in');
+            
+            anime.timeline()
+                .add({
+                    targets: heroElements[0],
+                    opacity: [0, 1],
+                    translateY: [50, 0],
+                    duration: 1000,
+                    easing: 'easeOutQuart'
+                })
+                .add({
+                    targets: heroElements[1],
+                    opacity: [0, 1],
+                    translateY: [30, 0],
+                    duration: 800,
+                    easing: 'easeOutQuart'
+                }, '-=600')
+                .add({
+                    targets: heroElements[2],
+                    opacity: [0, 1],
+                    translateY: [30, 0],
+                    duration: 800,
+                    easing: 'easeOutQuart'
+                }, '-=400')
+                .add({
+                    targets: heroElements[3],
+                    opacity: [0, 1],
+                    scale: [0.8, 1],
+                    duration: 1000,
+                    easing: 'easeOutBack'
+                }, '-=600');
+        });
+        
+        // Gestion des formulaires
+        const newsletterForm = document.getElementById('newsletter-form');
+        const contactForm = document.getElementById('contact-form');
+        
+        // Newsletter
+        if (newsletterForm) {
+            newsletterForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const button = e.target.querySelector('button[type="submit"]');
+                const originalText = button.innerHTML;
+                
+                // Animation de chargement
+                button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Inscription en cours...';
+                button.disabled = true;
+                
+                // Simulation d'envoi
+                setTimeout(() => {
+                    button.innerHTML = '<i class="fas fa-check mr-2"></i>Inscrit avec succès !';
+                    button.classList.remove('bg-flagship-blue', 'hover:bg-flagship-dark');
+                    button.classList.add('bg-green-500');
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                        button.classList.remove('bg-green-500');
+                        button.classList.add('bg-flagship-blue', 'hover:bg-flagship-dark');
+                        newsletterForm.reset();
+                    }, 2000);
+                }, 1500);
+            });
+        }
+        
+        // Contact
+        if (contactForm) {
+            contactForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const button = e.target.querySelector('button[type="submit"]');
+                const originalText = button.innerHTML;
+                
+                // Animation de chargement
+                button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Envoi en cours...';
+                button.disabled = true;
+                
+                // Simulation d'envoi
+                setTimeout(() => {
+                    button.innerHTML = '<i class="fas fa-check mr-2"></i>Message envoyé !';
+                    button.classList.remove('bg-flagship-blue', 'hover:bg-flagship-dark');
+                    button.classList.add('bg-green-500');
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                        button.classList.remove('bg-green-500');
+                        button.classList.add('bg-flagship-blue', 'hover:bg-flagship-dark');
+                        contactForm.reset();
+                    }, 2000);
+                }, 2000);
+            });
+        }
+        
+        // Chat widget
+        const chatBtn = document.getElementById('chat-btn');
+        if (chatBtn) {
+            chatBtn.addEventListener('click', () => {
+                // Animation du bouton
+                anime({
+                    targets: chatBtn,
+                    scale: [1, 0.9, 1],
+                    duration: 300,
+                    easing: 'easeInOutQuad'
+                });
+                
+                // Simulation d'ouverture du chat
+                alert('Chat en cours de développement. Contactez-nous via le formulaire ou par email !');
+            });
+        }
+        
+        // Animation des cartes au hover
+        const cards = document.querySelectorAll('.card-hover');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                anime({
+                    targets: card,
+                    scale: 1.02,
+                    duration: 300,
+                    easing: 'easeOutQuart'
+                });
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                anime({
+                    targets: card,
+                    scale: 1,
+                    duration: 300,
+                    easing: 'easeOutQuart'
+                });
+            });
+        });
+        
+      
+        
+        // Animation du texte gradient
+        const gradientText = document.querySelector('.text-gradient');
+        if (gradientText) {
+            setInterval(() => {
+                anime({
+                    targets: gradientText,
+                    background: [
+                        'linear-gradient(135deg, #0066CC, #003366)',
+                        'linear-gradient(135deg, #003366, #0066CC)',
+                        'linear-gradient(135deg, #0066CC, #003366)'
+                    ],
+                    duration: 3000,
+                    easing: 'easeInOutSine'
+                });
+            }, 4000);
+        }
+          // Effet parallax léger sur le hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('#accueil');
+            if (parallax && scrolled < window.innerHeight) {
+                parallax.style.transform = translateY ($scrolled * 0.3);
+            }
+        });
+        // Compteurs animés pour les statistiques
+        const animateCounters = () => {
+            const counters = document.querySelectorAll('#accueil .text-3xl');
+            counters.forEach(counter => {
+                const target = parseInt(counter.textContent);
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            anime({
+                                targets: { count: 0 },
+                                count: target,
+                                duration: 2000,
+                                easing: 'easeOutQuart',
+                                update: function(anim) {
+                                    counter.textContent = Math.round(anim.animatables[0].target.count) + '+';
+                                }
+                            });
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                });
+                observer.observe(counter);
+            });
+        };
+        
+        // Initialiser les compteurs
+        animateCounters();
+        
+        // Animation des icônes au hover
+        const icons = document.querySelectorAll('.fas, .fab');
+        icons.forEach(icon => {
+            const parent = icon.closest('button, a, .w-12, .w-16');
+            if (parent) {
+                parent.addEventListener('mouseenter', () => {
+                    anime({
+                        targets: icon,
+                        rotate: '1turn',
+                        duration: 600,
+                        easing: 'easeInOutBack'
+                    });
+                });
+            }
+        });
+        
+        // Préchargement des images pour optimiser les performances
+        const preloadImages = () => {
+            const imageUrls = [
+                // Ajoutez ici les URLs de vos images si vous en avez
+            ];
+            
+            imageUrls.forEach(url => {
+                const img = new Image();
+                img.src = url;
+            });
+        };
+        
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            preloadImages();
+            
+            // Animation d'entrée générale
+            anime({
+                targets: 'body',
+                opacity: [0, 1],
+                duration: 500,
+                easing: 'easeOutQuart'
+            });
+        });
+    </script>
+</body>
+</html>
