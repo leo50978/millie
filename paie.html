@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Système de Paiement Manuel - MonCash/NatCash</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Vue.js -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- QR Code Generator -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .payment-modal {
+            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen" id="app">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg sticky top-0 z-40">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <i class="fas fa-mobile-alt text-2xl"></i>
+                   
+                </div>
+                <div class="flex items-center space-x-6">
+                    <button @click="currentView = 'products'" 
+                            :class="currentView === 'products' ? 'text-yellow-300' : 'text-white'"
+                            class="hover:text-yellow-300 transition-colors">
+                        <i class="fas fa-shopping-bag mr-2"></i>Produits
+                    </button>
+                    <button @click="currentView = 'admin'"
+                            :class="currentView === 'admin' ? 'text-yellow-300' : 'text-white'"
+                            class="hover:text-yellow-300 transition-colors">
+                        <i class="fas fa-cog mr-2"></i>Admin
+                    </button>
+                    <div class="relative">
+                        <button @click="showCart = true" class="relative p-2 hover:bg-white/10 rounded-lg transition-colors">
+                            <i class="fas fa-shopping-cart text-xl"></i>
+                            <span v-if="cartItems.length > 0" 
+                                  class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                                {{ cartItems.length }}
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        
+        <!-- Products Section -->
+        <section v-if="currentView === 'products'" class="products-section">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Nos Produits</h2>
+                <p class="text-xl text-gray-600">Découvrez notre sélection de produits</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div v-for="product in products" :key="product.id" 
+                     class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+                    <div class="h-48 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                        <i :class="product.icon" class="text-6xl text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ product.name }}</h3>
+                        <p class="text-gray-600 mb-4">{{ product.description }}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-purple-600">{{ product.price }} HTG</span>
+                            <button @click="addToCart(product)" 
+                                    class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+                                <i class="fas fa-plus mr-2"></i>Ajouter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin Section -->
+        <section v-if="currentView === 'admin'" class="admin-section">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Administration</h2>
+                <p class="text-xl text-gray-600">Gestion des paiements</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-semibold text-gray-800">Paiements soumis</h3>
+                    <div class="flex space-x-2">
+                        <button @click="filterStatus = 'all'" 
+                                :class="filterStatus === 'all' ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-700'"
+                                class="px-4 py-2 rounded-lg transition-colors">
+                            Tous ({{ payments.length }})
+                        </button>
+                        <button @click="filterStatus = 'pending'" 
+                                :class="filterStatus === 'pending' ? 'bg-yellow-600 text-white' : 'bg-gray-200 text-gray-700'"
+                                class="px-4 py-2 rounded-lg transition-colors">
+                            En attente ({{ payments.filter(p => p.status === 'pending').length }})
+                        </button>
+                        <button @click="filterStatus = 'verified'" 
+                                :class="filterStatus === 'verified' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'"
+                                class="px-4 py-2 rounded-lg transition-colors">
+                            Vérifiés ({{ payments.filter(p => p.status === 'verified').length }})
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Numéro</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Montant</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr v-for="payment in filteredPayments" :key="payment.id" class="hover:bg-gray-50">
+                                <td class="px-4 py-4 text-sm text-gray-900">{{ payment.id }}</td>
+                                <td class="px-4 py-4 text-sm text-gray-900">{{ payment.phoneNumber }}</td>
+                                <td class="px-4 py-4 text-sm font-semibold text-gray-900">{{ payment.amount }} HTG</td>
+                                <td class="px-4 py-4 text-sm text-gray-900">{{ formatDate(payment.date) }}</td>
+                                <td class="px-4 py-4">
+                                    <span :class="getStatusClass(payment.status)" 
+                                          class="px-2 py-1 text-xs rounded-full font-semibold">
+                                        {{ getStatusText(payment.status) }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-4">
+                                    <div class="flex space-x-2">
+                                        <button @click="viewPaymentDetails(payment)" 
+                                                class="text-blue-600 hover:text-blue-800 transition-colors">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button v-if="payment.status === 'pending'" 
+                                                @click="updatePaymentStatus(payment.id, 'verified')"
+                                                class="text-green-600 hover:text-green-800 transition-colors">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <button v-if="payment.status === 'pending'" 
+                                                @click="updatePaymentStatus(payment.id, 'rejected')"
+                                                class="text-red-600 hover:text-red-800 transition-colors">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Cart Modal -->
+    <div v-if="showCart" class="fixed inset-0 payment-modal flex items-center justify-center z-50" @click.self="showCart = false">
+        <div class="bg-white rounded-xl max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto slide-in">
+            <div class="p-6 border-b">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-semibold">Panier</h3>
+                    <button @click="showCart = false" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <div v-if="cartItems.length === 0" class="text-center py-8">
+                    <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-4"></i>
+                    <p class="text-gray-500">Votre panier est vide</p>
+                </div>
+                
+                <div v-else>
+                    <div v-for="item in cartItems" :key="item.id" class="flex items-center justify-between py-3 border-b">
+                        <div class="flex items-center space-x-3">
+                            <i :class="item.icon" class="text-2xl text-purple-600"></i>
+                            <div>
+                                <h4 class="font-semibold">{{ item.name }}</h4>
+                                <p class="text-sm text-gray-500">{{ item.price }} HTG</p>
+                            </div>
+                        </div>
+                        <button @click="removeFromCart(item.id)" class="text-red-600 hover:text-red-800">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="mt-6 pt-4 border-t">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-lg font-semibold">Total:</span>
+                            <span class="text-2xl font-bold text-purple-600">{{ cartTotal }} HTG</span>
+                        </div>
+                        
+                        <button @click="proceedToPayment" 
+                                class="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition-colors pulse-animation">
+                            <i class="fas fa-credit-card mr-2"></i>Procéder au paiement
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Instructions Modal -->
+    <div v-if="showPaymentModal" class="fixed inset-0 payment-modal flex items-center justify-center z-50" @click.self="showPaymentModal = false">
+        <div class="bg-white rounded-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto slide-in">
+            <div class="p-6 border-b">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-2xl font-semibold">Instructions de Paiement</h3>
+                    <button @click="showPaymentModal = false" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <div class="text-center mb-6">
+                    <div class="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-mobile-alt text-2xl text-purple-600"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-2">Montant à payer: {{ cartTotal }} HTG</h4>
+                    <p class="text-gray-600">Suivez les étapes ci-dessous pour effectuer votre paiement</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- MonCash -->
+                    <div class="border rounded-lg p-4">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-red-100 rounded-full w-10 h-10 flex items-center justify-center mr-3">
+                                <i class="fas fa-mobile text-red-600"></i>
+                            </div>
+                            <h5 class="font-semibold">MonCash</h5>
+                        </div>
+                        <div class="text-center mb-3">
+                            <canvas ref="qrMonCash" class="mx-auto mb-2"></canvas>
+                            <p class="text-sm text-gray-600">Numéro: +509 1234 5678</p>
+                            <p class="text-sm text-gray-600">Nom: vitch web studio</p>
+                        </div>
+                    </div>
+
+                    <!-- NatCash -->
+                    <div class="border rounded-lg p-4">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-blue-100 rounded-full w-10 h-10 flex items-center justify-center mr-3">
+                                <i class="fas fa-university text-blue-600"></i>
+                            </div>
+                            <h5 class="font-semibold">NatCash</h5>
+                        </div>
+                        <div class="text-center mb-3">
+                            <canvas ref="qrNatCash" class="mx-auto mb-2"></canvas>
+                            <p class="text-sm text-gray-600">Numéro: +509 8765 4321</p>
+                            <p class="text-sm text-gray-600">Nom: vitch web studio</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                    <h5 class="font-semibold text-yellow-800 mb-2">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>Instructions importantes:
+                    </h5>
+                    <ol class="text-sm text-yellow-700 space-y-1">
+                        <li>1. Vérifiez que vous avez assez d'argent sur votre compte</li>
+                        <li>2. Scannez le QR code ou utilisez le numéro ci-dessus</li>
+                        <li>3. Envoyez exactement {{ cartTotal }} HTG</li>
+                        <li>4. Prenez une capture d'écran de la confirmation</li>
+                        <li>5. Remplissez le formulaire de preuve ci-dessous</li>
+                    </ol>
+                </div>
+
+                <button @click="showProofForm = true" 
+                        class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors">
+                    <i class="fas fa-check mr-2"></i>J'ai effectué le paiement - Soumettre la preuve
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Proof Form Modal -->
+    <div v-if="showProofForm" class="fixed inset-0 payment-modal flex items-center justify-center z-50" @click.self="showProofForm = false">
+        <div class="bg-white rounded-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto slide-in">
+            <div class="p-6 border-b">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-semibold">Preuve de Paiement</h3>
+                    <button @click="showProofForm = false" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <form @submit.prevent="submitProof" class="p-6">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-phone mr-2"></i>Numéro qui a envoyé l'argent
+                        </label>
+                        <input v-model="proofForm.phoneNumber" 
+                               type="tel" 
+                               required 
+                               placeholder="+509 1234 5678"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-dollar-sign mr-2"></i>Montant envoyé (HTG)
+                        </label>
+                        <input v-model.number="proofForm.amount" 
+                               type="number" 
+                               required 
+                               :placeholder="cartTotal.toString()"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-calendar mr-2"></i>Date du paiement
+                        </label>
+                        <input v-model="proofForm.date" 
+                               type="date" 
+                               required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-hashtag mr-2"></i>ID de la transaction (optionnel)
+                        </label>
+                        <input v-model="proofForm.transactionId" 
+                               type="text" 
+                               placeholder="TX12345..."
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-camera mr-2"></i>Capture d'écran du paiement
+                        </label>
+                        <input @change="handleFileUpload" 
+                               type="file" 
+                               accept="image/*" 
+                               required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
+                        <div v-if="proofForm.screenshot" class="mt-2">
+                            <img :src="proofForm.screenshot" class="w-full max-w-xs rounded-lg" alt="Preuve de paiement">
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" 
+                        :disabled="isSubmitting"
+                        class="w-full mt-6 bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50">
+                    <i class="fas fa-paper-plane mr-2"></i>
+                    {{ isSubmitting ? 'Envoi en cours...' : 'Soumettre la preuve' }}
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Payment Details Modal -->
+    <div v-if="selectedPayment" class="fixed inset-0 payment-modal flex items-center justify-center z-50" @click.self="selectedPayment = null">
+        <div class="bg-white rounded-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto slide-in">
+            <div class="p-6 border-b">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-semibold">Détails du Paiement</h3>
+                    <button @click="selectedPayment = null" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6 space-y-4">
+                <div class="flex justify-between">
+                    <span class="text-gray-600">ID:</span>
+                    <span class="font-semibold">{{ selectedPayment.id }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Numéro:</span>
+                    <span class="font-semibold">{{ selectedPayment.phoneNumber }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Montant:</span>
+                    <span class="font-semibold">{{ selectedPayment.amount }} HTG</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Date:</span>
+                    <span class="font-semibold">{{ formatDate(selectedPayment.date) }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Transaction ID:</span>
+                    <span class="font-semibold">{{ selectedPayment.transactionId || 'N/A' }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Statut:</span>
+                    <span :class="getStatusClass(selectedPayment.status)" 
+                          class="px-2 py-1 text-xs rounded-full font-semibold">
+                        {{ getStatusText(selectedPayment.status) }}
+                    </span>
+                </div>
+                
+                <div v-if="selectedPayment.screenshotUrl">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Capture d'écran:</label>
+                    <img :src="selectedPayment.screenshotUrl" class="w-full rounded-lg" alt="Preuve de paiement">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div v-if="showSuccessToast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 slide-in">
+        <i class="fas fa-check-circle mr-2"></i>{{ successMessage }}
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    currentView: 'products',
+                    showCart: false,
+                    showPaymentModal: false,
+                    showProofForm: false,
+                    showSuccessToast: false,
+                    successMessage: '',
+                    selectedPayment: null,
+                    isSubmitting: false,
+                    filterStatus: 'all',
+                    
+                    products: [
+                        { 
+                            id: 1, 
+                            name: 'Smartphone Premium', 
+                            description: 'Dernier modèle avec toutes les fonctionnalités', 
+                            price: 15000, 
+                            icon: 'fas fa-mobile-alt' 
+                        },
+                        { 
+                            id: 2, 
+                            name: 'Laptop Gaming', 
+                            description: 'Ordinateur portable haute performance', 
+                            price: 45000, 
+                            icon: 'fas fa-laptop' 
+                        },
+                        { 
+                            id: 3, 
+                            name: 'Écouteurs Bluetooth', 
+                            description: 'Qualité audio exceptionnelle', 
+                            price: 3500, 
+                            icon: 'fas fa-headphones' 
+                        },
+                        { 
+                            id: 4, 
+                            name: 'Tablette Pro', 
+                            description: 'Parfaite pour le travail et les loisirs', 
+                            price: 12000, 
+                            icon: 'fas fa-tablet-alt' 
+                        },
+                        { 
+                            id: 5, 
+                            name: 'Montre Connectée', 
+                            description: 'Suivez votre santé et vos activités', 
+                            price: 8500, 
+                            icon: 'fas fa-clock' 
+                        },
+                        { 
+                            id: 6, 
+                            name: 'Camera 4K', 
+                            description: 'Capturez vos moments en haute définition', 
+                            price: 25000, 
+                            icon: 'fas fa-video' 
+                        }
+                    ],
+                    
+                    cartItems: [],
+                    
+                    proofForm: {
+                        phoneNumber: '',
+                        amount: 0,
+                        date: '',
+                        transactionId: '',
+                        screenshot: null
+                    },
+                    
+                    payments: [
+                        {
+                            id: 'PAY001',
+                            userId: 'user123',
+                            phoneNumber: '+509 1234 5678',
+                            amount: 15000,
+                            date: '2025-08-20',
+                            transactionId: 'TX98765',
+                            screenshotUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y0ZjRmNCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY2NiI+UHJldXZlIGRlIHBhaWVtZW50PC90ZXh0Pjwvc3ZnPg==',
+                            status: 'pending'
+                        },
+                        {
+                            id: 'PAY002',
+                            userId: 'user456',
+                            phoneNumber: '+509 8765 4321',
+                            amount: 3500,
+                            date: '2025-08-19',
+                            transactionId: 'TX54321',
+                            screenshotUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y0ZjRmNCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY2NiI+UHJldXZlIGRlIHBhaWVtZW50PC90ZXh0Pjwvc3ZnPg==',
+                            status: 'verified'
+                        },
+                        {
+                            id: 'PAY003',
+                            userId: 'user789',
+                            phoneNumber: '+509 5555 5555',
+                            amount: 12000,
+                            date: '2025-08-18',
+                            transactionId: 'TX11111',
+                            screenshotUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y0ZjRmNCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY2NiI+UHJldXZlIGRlIHBhaWVtZW50PC90ZXh0Pjwvc3ZnPg==',
+                            status: 'rejected'
+                        }
+                    ]
+                }
+            },
+            
+            computed: {
+                cartTotal() {
+                    return this.cartItems.reduce((total, item) => total + item.price, 0);
+                },
+                
+                filteredPayments() {
+                    if (this.filterStatus === 'all') {
+                        return this.payments;
+                    }
+                    return this.payments.filter(payment => payment.status === this.filterStatus);
+                }
+            },
+            
+            mounted() {
+                this.initAnimations();
+                // Set today's date as default
+                this.proofForm.date = new Date().toISOString().split('T')[0];
+            },
+            
+            methods: {
+                initAnimations() {
+                    // Animate products cards on load
+                    anime({
+                        targets: '.products-section .card-hover',
+                        translateY: [50, 0],
+                        opacity: [0, 1],
+                        delay: anime.stagger(100),
+                        duration: 800,
+                        easing: 'easeOutQuart'
+                    });
+                    
+                    // Animate admin table rows
+                    anime({
+                        targets: '.admin-section tbody tr',
+                        translateX: [-30, 0],
+                        opacity: [0, 1],
+                        delay: anime.stagger(50),
+                        duration: 600,
+                        easing: 'easeOutQuart'
+                    });
+                },
+                
+                addToCart(product) {
+                    this.cartItems.push({...product});
+                    
+                    // Animation for cart icon
+                    anime({
+                        targets: '.fa-shopping-cart',
+                        scale: [1, 1.3, 1],
+                        duration: 300,
+                        easing: 'easeOutBack'
+                    });
+                    
+                    this.showToast('Produit ajouté au panier!');
+                },
+                
+                removeFromCart(productId) {
+                    const index = this.cartItems.findIndex(item => item.id === productId);
+                    if (index > -1) {
+                        this.cartItems.splice(index, 1);
+                    }
+                },
+                
+                proceedToPayment() {
+                    if (this.cartItems.length === 0) return;
+                    
+                    this.showCart = false;
+                    this.showPaymentModal = true;
+                    this.proofForm.amount = this.cartTotal;
+                    
+                    // Generate QR codes when modal opens
+                    this.$nextTick(() => {
+                        this.generateQRCodes();
+                    });
+                },
+                
+                generateQRCodes() {
+                    // MonCash QR Code
+                    const qrMonCash = new QRious({
+                        element: this.$refs.qrMonCash,
+                        size: 150,
+                        value: `moncash:+50912345678?amount=${this.cartTotal}&name=PaymentSystem`
+                    });
+                    
+                    // NatCash QR Code
+                    const qrNatCash = new QRious({
+                        element: this.$refs.qrNatCash,
+                        size: 150,
+                        value: `natcash:+50987654321?amount=${this.cartTotal}&name=PaymentSystem`
+                    });
+                },
+                
+                handleFileUpload(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            this.proofForm.screenshot = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                },
+                
+                async submitProof() {
+                    this.isSubmitting = true;
+                    
+                    try {
+                        // Simulate API call delay
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        
+                        // Create new payment record
+                        const newPayment = {
+                            id: 'PAY' + String(this.payments.length + 1).padStart(3, '0'),
+                            userId: 'user' + Math.random().toString(36).substr(2, 6),
+                            phoneNumber: this.proofForm.phoneNumber,
+                            amount: this.proofForm.amount,
+                            date: this.proofForm.date,
+                            transactionId: this.proofForm.transactionId || 'TX' + Math.random().toString(36).substr(2, 8).toUpperCase(),
+                            screenshotUrl: this.proofForm.screenshot,
+                            status: 'pending'
+                        };
+                        
+                        // Add to payments array (in real app, this would be saved to Firebase)
+                        this.payments.unshift(newPayment);
+                        
+                        // Generate receipt PDF
+                        this.generateReceipt(newPayment);
+                        
+                        // Reset form
+                        this.resetForms();
+                        
+                        // Show success message
+                        this.showToast('Preuve de paiement soumise avec succès! Un reçu a été généré.');
+                        
+                        // Clear cart
+                        this.cartItems = [];
+                        
+                    } catch (error) {
+                        console.error('Error submitting proof:', error);
+                        this.showToast('Erreur lors de la soumission. Veuillez réessayer.', 'error');
+                    } finally {
+                        this.isSubmitting = false;
+                    }
+                },
+                
+                generateReceipt(payment) {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+                    
+                    // Header
+                    doc.setFontSize(20);
+                    doc.setFont(undefined, 'bold');
+                    doc.text('REÇU DE PAIEMENT', 105, 30, null, null, 'center');
+                    
+                    // Company info
+                    doc.setFontSize(12);
+                    doc.setFont(undefined, 'normal');
+                    doc.text('PaymentSystem', 105, 45, null, null, 'center');
+                    doc.text('Système de paiement mobile', 105, 55, null, null, 'center');
+                    
+                    // Divider
+                    doc.line(20, 70, 190, 70);
+                    
+                    // Payment details
+                    doc.setFont(undefined, 'bold');
+                    doc.text('DÉTAILS DU PAIEMENT', 20, 85);
+                    
+                    doc.setFont(undefined, 'normal');
+                    let yPos = 100;
+                    doc.text(`ID de paiement: ${payment.id}`, 20, yPos);
+                    yPos += 10;
+                    doc.text(`Numéro expéditeur: ${payment.phoneNumber}`, 20, yPos);
+                    yPos += 10;
+                    doc.text(`Montant: ${payment.amount} HTG`, 20, yPos);
+                    yPos += 10;
+                    doc.text(`Date: ${this.formatDate(payment.date)}`, 20, yPos);
+                    yPos += 10;
+                    doc.text(`Transaction ID: ${payment.transactionId}`, 20, yPos);
+                    yPos += 10;
+                    doc.text(`Statut: En attente de vérification`, 20, yPos);
+                    
+                    // Footer
+                    doc.line(20, yPos + 20, 190, yPos + 20);
+                    doc.setFontSize(10);
+                    doc.text('Ce reçu confirme la soumission de votre preuve de paiement.', 105, yPos + 35, null, null, 'center');
+                    doc.text('La vérification sera effectuée dans les plus brefs délais.', 105, yPos + 45, null, null, 'center');
+                    doc.text(`Généré le ${new Date().toLocaleString('fr-HT')}`, 105, yPos + 60, null, null, 'center');
+                    
+                    // Download the PDF
+                    doc.save(`recu_paiement_${payment.id}.pdf`);
+                },
+                
+                resetForms() {
+                    this.showPaymentModal = false;
+                    this.showProofForm = false;
+                    
+                    // Reset proof form
+                    this.proofForm = {
+                        phoneNumber: '',
+                        amount: 0,
+                        date: new Date().toISOString().split('T')[0],
+                        transactionId: '',
+                        screenshot: null
+                    };
+                },
+                
+                viewPaymentDetails(payment) {
+                    this.selectedPayment = payment;
+                },
+                
+                updatePaymentStatus(paymentId, status) {
+                    const payment = this.payments.find(p => p.id === paymentId);
+                    if (payment) {
+                        payment.status = status;
+                        
+                        const statusText = status === 'verified' ? 'vérifié' : 'rejeté';
+                        this.showToast(`Paiement ${payment.id} ${statusText} avec succès!`);
+                        
+                        // Animation for status change
+                        anime({
+                            targets: `tr:has(td:contains('${paymentId}'))`,
+                            backgroundColor: status === 'verified' ? '#dcfce7' : '#fef2f2',
+                            duration: 1000,
+                            easing: 'easeOutQuart',
+                            complete: () => {
+                                anime({
+                                    targets: `tr:has(td:contains('${paymentId}'))`,
+                                    backgroundColor: '#ffffff',
+                                    duration: 1000,
+                                    delay: 500
+                                });
+                            }
+                        });
+                    }
+                },
+                
+                getStatusClass(status) {
+                    switch(status) {
+                        case 'pending':
+                            return 'bg-yellow-100 text-yellow-800';
+                        case 'verified':
+                            return 'bg-green-100 text-green-800';
+                        case 'rejected':
+                            return 'bg-red-100 text-red-800';
+                        default:
+                            return 'bg-gray-100 text-gray-800';
+                    }
+                },
+                
+                getStatusText(status) {
+                    switch(status) {
+                        case 'pending':
+                            return 'En attente';
+                        case 'verified':
+                            return 'Vérifié';
+                        case 'rejected':
+                            return 'Rejeté';
+                        default:
+                            return 'Inconnu';
+                    }
+                },
+                
+                formatDate(dateString) {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('fr-HT', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                },
+                
+                showToast(message, type = 'success') {
+                    this.successMessage = message;
+                    this.showSuccessToast = true;
+                    
+                    // Auto hide after 3 seconds
+                    setTimeout(() => {
+                        this.showSuccessToast = false;
+                    }, 3000);
+                    
+                    // Animate toast
+                    anime({
+                        targets: '.fixed.bottom-4.right-4',
+                        translateX: [300, 0],
+                        opacity: [0, 1],
+                        duration: 300,
+                        easing: 'easeOutBack'
+                    });
+                }
+            },
+            
+            watch: {
+                currentView() {
+                    // Re-animate when switching views
+                    this.$nextTick(() => {
+                        this.initAnimations();
+                    });
+                },
+                
+                showPaymentModal(newVal) {
+                    if (newVal) {
+                        // Animate modal opening
+                        anime({
+                            targets: '.payment-modal .slide-in',
+                            scale: [0.8, 1],
+                            opacity: [0, 1],
+                            duration: 300,
+                            easing: 'easeOutBack'
+                        });
+                    }
+                },
+                
+                showProofForm(newVal) {
+                    if (newVal) {
+                        // Animate form opening
+                        anime({
+                            targets: '.payment-modal .slide-in',
+                            scale: [0.8, 1],
+                            opacity: [0, 1],
+                            duration: 300,
+                            easing: 'easeOutBack'
+                        });
+                    }
+                }
+            }
+        }).mount('#app');
+
+        // Additional vanilla JavaScript for advanced features
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scrolling for internal links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Enhanced keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                // Close modals with Escape key
+                if (e.key === 'Escape') {
+                    const app = document.getElementById('app').__vue_app__.config.globalProperties;
+                    if (app.$data.showCart) app.$data.showCart = false;
+                    if (app.$data.showPaymentModal) app.$data.showPaymentModal = false;
+                    if (app.$data.showProofForm) app.$data.showProofForm = false;
+                    if (app.$data.selectedPayment) app.$data.selectedPayment = null;
+                }
+            });
+
+            // Intersection Observer for scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        anime({
+                            targets: entry.target,
+                            translateY: [30, 0],
+                            opacity: [0, 1],
+                            duration: 600,
+                            easing: 'easeOutQuart'
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            // Observe elements for scroll animations
+            setTimeout(() => {
+                document.querySelectorAll('.card-hover').forEach(card => {
+                    observer.observe(card);
+                });
+            }, 100);
+
+            // Enhanced file upload with drag and drop
+            function setupDragAndDrop() {
+                const dropZones = document.querySelectorAll('input[type="file"]');
+                
+                dropZones.forEach(dropZone => {
+                    const container = dropZone.parentElement;
+                    
+                    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                        container.addEventListener(eventName, preventDefaults, false);
+                    });
+
+                    function preventDefaults(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+
+                    ['dragenter', 'dragover'].forEach(eventName => {
+                        container.addEventListener(eventName, () => {
+                            container.classList.add('border-purple-500', 'bg-purple-50');
+                        }, false);
+                    });
+
+                    ['dragleave', 'drop'].forEach(eventName => {
+                        container.addEventListener(eventName, () => {
+                            container.classList.remove('border-purple-500', 'bg-purple-50');
+                        }, false);
+                    });
+
+                    container.addEventListener('drop', (e) => {
+                        const dt = e.dataTransfer;
+                        const files = dt.files;
+                        
+                        if (files.length > 0) {
+                            dropZone.files = files;
+                            dropZone.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                    }, false);
+                });
+            }
+
+            // Initialize drag and drop after a short delay
+            setTimeout(setupDragAndDrop, 500);
+
+            // Add loading states and error handling for file uploads
+            function enhanceFileInputs() {
+                document.addEventListener('change', function(e) {
+                    if (e.target.type === 'file') {
+                        const file = e.target.files[0];
+                        if (file) {
+                            // Validate file size (max 5MB)
+                            if (file.size > 5 * 1024 * 1024) {
+                                alert('Le fichier est trop volumineux. Maximum 5MB.');
+                                e.target.value = '';
+                                return;
+                            }
+                            
+                            // Validate file type
+                            if (!file.type.startsWith('image/')) {
+                                alert('Veuillez sélectionner une image.');
+                                e.target.value = '';
+                                return;
+                            }
+                        }
+                    }
+                });
+            }
+
+            enhanceFileInputs();
+
+            // Performance optimization: lazy load images
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            if (img.dataset.src) {
+                                img.src = img.dataset.src;
+                                img.removeAttribute('data-src');
+                                imageObserver.unobserve(img);
+                            }
+                        }
+                    });
+                });
+
+                document.querySelectorAll('img[data-src]').forEach(img => {
+                    imageObserver.observe(img);
+                });
+            }
+
+            console.log('🚀 Système de paiement manuel MonCash/NatCash initialisé avec succès!');
+        });
+    </script>
+</body>
+</html>
