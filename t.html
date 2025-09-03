@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>QCM - Shop Topup Haïti</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+VEHy6U0R4SZq+q5M3X1Z7mZKzbFhZ8+7C3bS2w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <meta name="color-scheme" content="light dark">
+  <style>
+    /* Accentuation pour focus clavier (a11y) */
+    :focus-visible { outline: 3px solid #6366F1; outline-offset: 2px; }
+  </style>
+</head>
+<body class="bg-neutral-50 text-neutral-900 font-sans antialiased">
+  <header class="max-w-3xl mx-auto px-4 pt-8 pb-4">
+    <div class="flex items-center gap-3">
+      <div class="h-10 w-10 rounded-md bg-black text-white grid place-items-center">
+        <i class="fa-solid fa-bolt"></i>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold leading-tight">Questionnaire rapide — Shop Topup Haïti</h1>
+        <p class="text-sm text-neutral-600">Cela nous aide à aligner le site sur vos objectifs réels (3–4 min).</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 pb-32">
+    <form id="qcm" class="space-y-6">
+
+      <!-- 1. Objectif principal -->
+      <section class="bg-white shadow-sm rounded-xl p-4">
+        <h2 class="font-semibold mb-3"><span class="mr-2 text-neutral-500">1.</span>Votre objectif principal</h2>
+        <div class="grid gap-2">
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="radio" name="objectif" value="Vendre en ligne des services (topup, abonnements, jeux)" required class="size-4">
+            <span>Vendre en ligne des services (topup, abonnements, jeux)</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="radio" name="objectif" value="Renforcer la crédibilité & rassurer les clients" class="size-4">
+            <span>Renforcer la crédibilité & rassurer les clients</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="radio" name="objectif" value="Générer des prospects (contacts, WhatsApp, email)" class="size-4">
+            <span>Générer des prospects (contacts, WhatsApp, email)</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="radio" name="objectif" value="Support & service client (chat, FAQ, suivi)" class="size-4">
+            <span>Support & service client (chat, FAQ, suivi)</span>
+          </label>
+          <div class="grid grid-cols-[auto,1fr] items-start gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="radio" name="objectif" value="Autre" id="obj-autre" class="size-4">
+            <label for="obj-autre" class="sr-only">Autre</label>
+            <input type="text" id="objectif_autre" placeholder="Autre (précisez)" class="w-full px-3 py-2 border rounded-lg" />
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Top 3 priorités fonctionnalités -->
+      <section class="bg-white shadow-sm rounded-xl p-4">
+        <h2 class="font-semibold mb-1"><span class="mr-2 text-neutral-500">2.</span>Vos <span class="font-bold">3 priorités</span> fonctionnalités</h2>
+        <p class="text-xs text-neutral-600 mb-3">Cochez jusqu’à 3 éléments maximum.</p>
+        <div class="grid gap-2" data-limit="3">
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="priorites" value="Boutique & paiement" class="size-4"> <span>Boutique & paiement</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="priorites" value="Chat / WhatsApp" class="size-4"> <span>Chat / WhatsApp</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="priorites" value="Formulaire & contact" class="size-4"> <span>Formulaire & contact</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="priorites" value="FAQ / Témoignages (réassurance)" class="size-4"> <span>FAQ / Témoignages (réassurance)</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="priorites" value="Blog & SEO" class="size-4"> <span>Blog & SEO</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="priorites" value="Réservation (si nécessaire)" class="size-4"> <span>Réservation (si nécessaire)</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- 3. Catalogue -->
+      <section class="bg-white shadow-sm rounded-xl p-4">
+        <h2 class="font-semibold mb-3"><span class="mr-2 text-neutral-500">3.</span>Quels services vendez-vous ?</h2>
+        <div class="grid gap-2">
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="catalogue" value="Top-up mobile" class="size-4"> <span>Top-up mobile</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="catalogue" value="Abonnements (Netflix, etc.)" class="size-4"> <span>Abonnements (Netflix, etc.)</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="catalogue" value="Jeux / cartes & crédits" class="size-4"> <span>Jeux / cartes & crédits</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="catalogue" value="Forfaits data / internet" class="size-4"> <span>Forfaits data / internet</span>
+          </label>
+          <div class="grid gap-2">
+            <label for="catalogue_detail" class="text-sm text-neutral-700">Détails (montants, délais de livraison, zones, etc.)</label>
+            <textarea id="catalogue_detail" rows="3" class="w-full px-3 py-2 border rounded-lg" placeholder="Ex. Top-up Digicel de 1$ à 50$, livraison immédiate..."></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Délivrance / Fulfillment -->
+      <section class="bg-white shadow-sm rounded-xl p-4">
+        <h2 class="font-semibold mb-3"><span class="mr-2 text-neutral-500">4.</span>Comment sont délivrés les services ?</h2>
+        <div class="grid gap-2">
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="radio" name="delivery" value="Automatique (instantané sur le site)" class="size-4" required>
+            <span>Automatique (instantané sur le site)</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="radio" name="delivery" value="Manuel (confirmation par WhatsApp / email)" class="size-4">
+            <span>Manuel (confirmation par WhatsApp / email)</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="radio" name="delivery" value="Mixte (selon le service)" class="size-4">
+            <span>Mixte (selon le service)</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- 5. Paiements -->
+      <section class="bg-white shadow-sm rounded-xl p-4">
+        <h2 class="font-semibold mb-3"><span class="mr-2 text-neutral-500">5.</span>Quels moyens de paiement accepter ?</h2>
+        <div class="grid gap-2">
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="paiement" value="Cartes (Visa/Mastercard)" class="size-4"> <span>Cartes (Visa/Mastercard)</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="paiement" value="Mobile Money (ex. MonCash)" class="size-4"> <span>Mobile Money (ex. MonCash)</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="paiement" value="Virement / dépôt bancaire" class="size-4"> <span>Virement / dépôt bancaire</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="paiement" value="Cash en point de vente" class="size-4"> <span>Cash en point de vente</span>
+          </label>
+          <div class="grid grid-cols-[auto,1fr] items-start gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="paiement" value="Autre (préciser)" id="pay-autre" class="size-4">
+            <label for="pay-autre" class="sr-only">Autre paiement</label>
+            <input type="text" id="paiement_autre" placeholder="Autre (précisez)" class="w-full px-3 py-2 border rounded-lg" />
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Réservation & Portfolio -->
+      <section class="bg-white shadow-sm rounded-xl p-4">
+        <h2 class="font-semibold mb-3"><span class="mr-2 text-neutral-500">6.</span>Réservation & “Portfolio”</h2>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="grid gap-2">
+            <p class="text-sm text-neutral-700">Avez-vous besoin d’un module de réservation ?</p>
+            <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+              <input type="radio" name="reservation" value="Oui" class="size-4" required> <span>Oui</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+              <input type="radio" name="reservation" value="Non" class="size-4"> <span>Non</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+              <input type="radio" name="reservation" value="Peut-être" class="size-4"> <span>Peut-être</span>
+            </label>
+          </div>
+          <div class="grid gap-2">
+            <p class="text-sm text-neutral-700">À quoi doit servir la page “Portfolio” ?</p>
+            <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+              <input type="radio" name="portfolio" value="Présenter des partenaires / marques" class="size-4" required> <span>Présenter des partenaires / marques</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+              <input type="radio" name="portfolio" value="Mettre en avant des offres / packs" class="size-4"> <span>Mettre en avant des offres / packs</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+              <input type="radio" name="portfolio" value="Pas nécessaire" class="size-4"> <span>Pas nécessaire</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. Contenu -->
+      <section class="bg-white shadow-sm rounded-xl p-4">
+        <h2 class="font-semibold mb-3"><span class="mr-2 text-neutral-500">7.</span>Contenu du site</h2>
+        <div class="grid gap-2">
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="radio" name="contenu" value="Contenu prêt (textes & images fournis)" class="size-4" required>
+            <span>Contenu prêt (textes & images fournis)</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="radio" name="contenu" value="À produire par nous" class="size-4">
+            <span>À produire par nous</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="radio" name="contenu" value="Mixte (une partie fournie)" class="size-4">
+            <span>Mixte (une partie fournie)</span>
+          </label>
+          <div class="grid gap-2 sm:grid-cols-2">
+            <div>
+              <label class="text-sm text-neutral-700">Langues</label>
+              <select name="langues" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                <option>Français</option>
+                <option>Français + Kreyòl</option>
+                <option>Français + Anglais</option>
+                <option>Français + Kreyòl + Anglais</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-sm text-neutral-700">Ton souhaité</label>
+              <select name="ton" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                <option>Formel</option>
+                <option>Simple & accessible</option>
+                <option>Énergique / marketing</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. Support client -->
+      <section class="bg-white shadow-sm rounded-xl p-4">
+        <h2 class="font-semibold mb-3"><span class="mr-2 text-neutral-500">8.</span>Support client</h2>
+        <div class="grid gap-2">
+          <label class="text-sm text-neutral-700">Canaux à activer</label>
+          <div class="grid gap-2 sm:grid-cols-2">
+            <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+              <input type="checkbox" name="support" value="Chat du site" class="size-4"> <span>Chat du site</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+              <input type="checkbox" name="support" value="WhatsApp" class="size-4"> <span>WhatsApp</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+              <input type="checkbox" name="support" value="Email" class="size-4"> <span>Email</span>
+            </label>
+            <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+              <input type="checkbox" name="support" value="Téléphone" class="size-4"> <span>Téléphone</span>
+            </label>
+          </div>
+          <div class="grid gap-2 sm:grid-cols-2">
+            <div>
+              <label class="text-sm text-neutral-700">Horaires de réponse</label>
+              <select name="horaires" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                <option>9h–17h (lun–ven)</option>
+                <option>9h–19h (lun–sam)</option>
+                <option>7j/7 (heures étendues)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-sm text-neutral-700">Délai cible de réponse</label>
+              <select name="delai" class="mt-1 w-full px-3 py-2 border rounded-lg">
+                <option>Immédiat (chat)</option>
+                <option>&lt; 1 heure</option>
+                <option>Dans la journée</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. SEO -->
+      <section class="bg-white shadow-sm rounded-xl p-4">
+        <h2 class="font-semibold mb-3"><span class="mr-2 text-neutral-500">9.</span>Référencement (SEO)</h2>
+        <div class="grid gap-2">
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="seo" value="Mots-clés fournis par vous" class="size-4"> <span>Mots-clés fournis par vous</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="seo" value="Recherche de mots-clés par nous" class="size-4"> <span>Recherche de mots-clés par nous</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="seo" value="Fiches services optimisées" class="size-4"> <span>Fiches services optimisées</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="seo" value="Blog (plus tard)" class="size-4"> <span>Blog (plus tard)</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="checkbox" name="seo" value="Google Business Profile (local)" class="size-4"> <span>Google Business Profile (local)</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- 10. Réseaux & Formation -->
+      <section class="bg-white shadow-sm rounded-xl p-4">
+        <h2 class="font-semibold mb-3"><span class="mr-2 text-neutral-500">10.</span>Réseaux & Formation</h2>
+        <div class="grid gap-2">
+          <label class="text-sm text-neutral-700" for="socials">Liens de vos réseaux (Facebook, Instagram, etc.)</label>
+          <input id="socials" type="text" placeholder="Ex. https://instagram.com/..." class="w-full px-3 py-2 border rounded-lg" />
+        </div>
+        <div class="grid gap-2 mt-3 sm:grid-cols-2">
+          <div>
+            <label class="text-sm text-neutral-700">Formation souhaitée</label>
+            <select name="formation" class="mt-1 w-full px-3 py-2 border rounded-lg">
+              <option>Oui (gestion du site)</option>
+              <option>Oui (réseaux sociaux)</option>
+              <option>Oui (site + réseaux)</option>
+              <option>Non</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-sm text-neutral-700">Échéance souhaitée</label>
+            <select name="echeance" class="mt-1 w-full px-3 py-2 border rounded-lg">
+              <option>Assez vite (2–3 semaines)</option>
+              <option>Ce mois-ci</option>
+              <option>Flexible</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11. Politiques -->
+      <section class="bg-white shadow-sm rounded-xl p-4">
+        <h2 class="font-semibold mb-3"><span class="mr-2 text-neutral-500">11.</span>Politiques & garanties</h2>
+        <div class="grid gap-2">
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="radio" name="refund" value="Remboursement possible selon conditions" class="size-4" required> <span>Remboursement possible selon conditions</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="radio" name="refund" value="Échanges / avoirs uniquement" class="size-4"> <span>Échanges / avoirs uniquement</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-lg border hover:border-neutral-400">
+            <input type="radio" name="refund" value="Pas de remboursement" class="size-4"> <span>Pas de remboursement</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- 12. Commentaires -->
+      <section class="bg-white shadow-sm rounded-xl p-4">
+        <h2 class="font-semibold mb-3"><span class="mr-2 text-neutral-500">12.</span>Quelque chose à ajouter ?</h2>
+        <textarea id="notes" rows="3" class="w-full px-3 py-2 border rounded-lg" placeholder="Commentaires, précisions, attentes..."></textarea>
+      </section>
+
+    </form>
+  </main>
+
+  <!-- Barre d’action sticky -->
+  <div class="fixed inset-x-0 bottom-0 bg-white/90 backdrop-blur border-t">
+    <div class="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
+      <p class="text-sm text-neutral-600 hidden sm:block">Vérifiez vos réponses puis envoyez-les sur WhatsApp.</p>
+      <button id="send" class="ml-auto inline-flex items-center gap-2 px-4 py-3 rounded-lg bg-black text-white font-semibold hover:opacity-90 active:opacity-80">
+        <i class="fa-brands fa-whatsapp text-lg"></i>
+        Envoyer sur WhatsApp
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Limite de 3 cases pour les priorités
+    document.querySelectorAll('[data-limit="3"]').forEach(group => {
+      const limit = 3;
+      const checkboxes = group.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+          const checked = Array.from(checkboxes).filter(c => c.checked);
+          if (checked.length > limit) {
+            cb.checked = false;
+            alert('Vous pouvez sélectionner au maximum ' + limit + ' priorités.');
+          }
+        });
+      });
+    });
+
+    // Si l'utilisateur saisit un "Autre", cocher la radio/checkbox associée
+    const objectifAutre = document.getElementById('objectif_autre');
+    if (objectifAutre) {
+      objectifAutre.addEventListener('input', () => {
+        const radio = document.getElementById('obj-autre');
+        if (objectifAutre.value.trim() !== '') radio.checked = true;
+      });
+    }
+    const paiementAutre = document.getElementById('paiement_autre');
+    if (paiementAutre) {
+      paiementAutre.addEventListener('input', () => {
+        const cb = document.getElementById('pay-autre');
+        if (paiementAutre.value.trim() !== '') cb.checked = true;
+      });
+    }
+
+    function getValues(nameOrId, type = 'group') {
+      if (type === 'group') {
+        const nodes = document.querySelectorAll(`[name="${nameOrId}"]`);
+        if (!nodes.length) return '—';
+        if (nodes[0].type === 'radio') {
+          const checked = Array.from(nodes).find(n => n.checked);
+          return checked ? checked.value : '—';
+        } else {
+          const checked = Array.from(nodes).filter(n => n.checked).map(n => n.value);
+          return checked.length ? checked.join(', ') : '—';
+        }
+      } else { // single input by id
+        const el = document.getElementById(nameOrId);
+        return el && el.value.trim() ? el.value.trim() : '—';
+      }
+    }
+
+    function buildMessage() {
+      const objectif = getValues('objectif');
+      const objectifAutreTxt = getValues('objectif_autre', 'single');
+      const priorites = getValues('priorites');
+      const catalogue = getValues('catalogue');
+      const catalogueDetail = getValues('catalogue_detail', 'single');
+      const delivery = getValues('delivery');
+      const paiement = getValues('paiement');
+      const paiementAutreTxt = getValues('paiement_autre', 'single');
+      const reservation = getValues('reservation');
+      const portfolio = getValues('portfolio');
+      const contenu = getValues('contenu');
+      const langues = getValues('langues');
+      const ton = getValues('ton');
+      const support = getValues('support');
+      const horaires = getValues('horaires');
+      const delai = getValues('delai');
+      const seo = getValues('seo');
+      const socials = getValues('socials', 'single');
+      const formation = getValues('formation');
+      const echeance = getValues('echeance');
+      const refund = getValues('refund');
+      const notes = getValues('notes', 'single');
+
+      const lignes = [
+        'QCM — Shop Topup Haïti',
+        '--------------------------------',
+        '1) Objectif principal : ' + (objectif === 'Autre' && objectifAutreTxt !== '—' ? ('Autre — ' + objectifAutreTxt) : objectif),
+        '2) Priorités (max 3) : ' + priorites,
+        '3) Services : ' + catalogue,
+        '   Détails : ' + catalogueDetail,
+        '4) Délivrance : ' + delivery,
+        '5) Paiements : ' + (paiementAutreTxt !== '—' ? (paiement + ', Autre — ' + paiementAutreTxt) : paiement),
+        '6) Réservation : ' + reservation,
+        '   Portfolio : ' + portfolio,
+        '7) Contenu : ' + contenu + ' | Langues : ' + langues + ' | Ton : ' + ton,
+        '8) Support : ' + support + ' | Horaires : ' + horaires + ' | Délai : ' + delai,
+        '9) SEO : ' + seo,
+        '10) Réseaux : ' + socials + ' | Formation : ' + formation,
+        '11) Politique : ' + refund,
+        '12) Notes : ' + notes
+      ];
+
+      return lignes.join('\n');
+    }
+
+    document.getElementById('send').addEventListener('click', function (e) {
+      e.preventDefault();
+
+      // Validation minimale sur quelques champs requis (gérés par HTML5 pour radios)
+      const form = document.getElementById('qcm');
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const message = buildMessage();
+      const encoded = encodeURIComponent(message);
+      const phone = '50935601379'; // numéro destinataire
+      const url = `https://wa.me/${phone}?text=${encoded}`;
+
+      // Si le message est très long, WhatsApp peut tronquer; on tente quand même.
+      window.open(url, '_blank', 'noopener');
+
+      // Optionnel: feedback visuel
+      this.innerHTML = '<i class="fa-solid fa-check"></i> Ouvert dans WhatsApp';
+      this.disabled = true;
+      setTimeout(() => { this.disabled = false; this.innerHTML = '<i class="fa-brands fa-whatsapp text-lg"></i> Envoyer sur WhatsApp'; }, 3000);
+    });
+  </script>
+</body>
+</html>
