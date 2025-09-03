@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flagshipgroup </title>
+    <meta name="description" content="Studio de création web haïtien spécialisé dans les sites professionnels pour entreprises locales.">
+    
+    <!-- Preload des polices pour améliorer les performances -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" as="style">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bibliothèque jsPDF pour générer des PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                        'serif': ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            900: '#0c4a6e'
+                        },
+                        accent: {
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c'
+                        }
+                    },
+                    transitionDuration: {
+                        '250': '250ms',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Custom CSS pour les effets avancés */
+        .hero-clip {
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+        }
+        
+        .card-hover {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #0ea5e9, #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-blur {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        /* Amélioration de l'accessibilité */
+        button:focus, a:focus, input:focus, textarea:focus {
+            outline: 2px solid #0ea5e9;
+            outline-offset: 2px;
+        }
+        
+        /* Optimisation mobile */
+        @media (max-width: 640px) {
+            .hero-clip {
+                clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+            }
+        }
+        
+        /* Animation du modal */
+        @keyframes modalEnter {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes modalExit {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+        }
+        
+        .modal-enter {
+            animation: modalEnter 0.3s ease-out forwards;
+        }
+        
+        .modal-exit {
+            animation: modalExit 0.2s ease-in forwards;
+        }
+    </style>
+</head>
+
+<body class="font-sans bg-gray-50 text-gray-800 leading-relaxed">
+    
+    <!-- Header Navigation Sticky -->
+    <header class="fixed top-0 w-full z-50 nav-blur border-b border-gray-200/50 shadow-sm" id="header">
+        <nav class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <a href="#accueil" class="flex items-center space-x-2 focus:outline-none">
+                
+                       <img src="image.png" style="width: 55px; height: 55px;" alt="">
+                
+                    <span class="font-serif font-bold text-xl text-gray-900">flagshipgroup</span>
+                </a>
+                
+                <!-- Navigation Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#accueil" class="text-gray-700 hover:text-primary-600 transition-colors font-medium py-2 px-1">Accueil</a>
+                   
+                    <a href="#paiement" class="text-gray-700 hover:text-primary-600 transition-colors font-medium py-2 px-1">Paiement</a>
+                    <a href="#contact" class="text-gray-700 hover:text-primary-600 transition-colors font-medium py-2 px-1">Contact</a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 focus:outline-none" id="mobile-menu-btn" aria-label="Menu mobile" aria-expanded="false">
+                    <i class="fas fa-bars text-gray-700 text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div class="md:hidden mt-2 pb-2 border-t border-gray-200/50 hidden" id="mobile-menu">
+                <div class="flex flex-col space-y-2 pt-3">
+                    <a href="#accueil" class="text-gray-700 hover:text-primary-600 transition-colors font-medium py-2 px-1">Accueil</a>
+                    <a href="#services" class="text-gray-700 hover:text-primary-600 transition-colors font-medium py-2 px-1">Services</a>
+                    <a href="#paiement" class="text-gray-700 hover:text-primary-600 transition-colors font-medium py-2 px-1">Paiement</a>
+                    <a href="#contact" class="text-gray-700 hover:text-primary-600 transition-colors font-medium py-2 px-1">Contact</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <!-- Hero Section -->
+    <section id="accueil" class="relative bg-gradient-to-br from-primary-50 via-white to-accent-50 hero-clip pt-24 pb-20">
+        <div class="container mx-auto px-4">
+            <!-- Badge de remerciement -->
+            <div class="text-center mb-8 fade-in">
+                <div class="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                    <i class="fas fa-shield-alt mr-2" aria-hidden="true"></i>
+                    100% Paiement Sécurisé
+                </div>
+            </div>
+            
+            <div class="max-w-4xl mx-auto text-center fade-in">
+                <!-- Titre principal -->
+                <h1 class="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                    <span class="block">Merci de faire</span>
+                    <span class="text-gradient">confiance</span>
+                    <span class="block">à flagshipgroup</span>
+                </h1>
+                
+                <!-- Message émotionnel -->
+                <div class="max-w-3xl mx-auto mb-8">
+                    <p class="text-lg md:text-xl text-gray-700 leading-relaxed font-light">
+                        Chaque site que nous créons est une graine plantée dans le monde numérique haïtien. 
+                        Grâce à votre soutien, nous faisons grandir une communauté de petites entreprises ambitieuses. 
+                        <span class="font-medium text-gray-800">Merci pour votre confiance et votre contribution à cet écosystème.</span>
+                    </p>
+                </div>
+                
+                <!-- CTA Button -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="#paiement" class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-md focus-visible:ring-4 focus-visible:ring-primary-300">
+                        <i class="fas fa-credit-card mr-2" aria-hidden="true"></i>
+                        Effectuer un paiement
+                    </a>
+                    <a href="#services" class="border-2 border-primary-600 text-primary-600 hover:bg-primary-600 hover:text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg font-semibold transition-all duration-300 focus-visible:ring-4 focus-visible:ring-primary-300">
+                        Découvrir nos services
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Decorative elements -->
+        <div class="absolute top-20 left-10 w-20 h-20 bg-accent-400/10 rounded-full blur-xl" aria-hidden="true"></div>
+        <div class="absolute bottom-20 right-10 w-32 h-32 bg-primary-500/10 rounded-full blur-2xl" aria-hidden="true"></div>
+    </section>
+    
+    <!-- Section Paiement -->
+    <section id="paiement" class="py-16 md:py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <!-- Titre de section -->
+                <div class="text-center mb-12 md:mb-16 fade-in">
+                    <h2 class="font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                        Choisissez votre méthode de paiement
+                    </h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                        Sélectionnez le service de paiement mobile qui vous convient le mieux
+                    </p>
+                </div>
+                
+                <!-- Options de paiement -->
+                <div class="grid md:grid-cols-2 gap-6 md:gap-8 mb-12">
+                    <!-- MonCash -->
+                    <div class="payment-card bg-gradient-to-br from-blue-50 to-blue-100 p-6 md:p-8 rounded-2xl border border-blue-200 card-hover cursor-pointer fade-in" 
+                         data-payment="moncash" 
+                         role="button"
+                         tabindex="0"
+                         aria-label="Payer avec MonCash">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-mobile-alt text-white text-2xl" aria-hidden="true"></i>
+                            </div>
+                            <h3 class="font-serif text-2xl font-bold text-gray-900 mb-2">MonCash</h3>
+                            <p class="text-gray-600 mb-4">Cliquez ici pour payer avec MonCash en toute simplicité.</p>
+                            <div class="bg-white/50 px-4 py-2 rounded-lg inline-block">
+                                <span class="text-sm font-medium text-blue-700">Rapide et sécurisé</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- NatCash -->
+                    <div class="payment-card bg-gradient-to-br from-green-50 to-green-100 p-6 md:p-8 rounded-2xl border border-green-200 card-hover cursor-pointer fade-in" 
+                         data-payment="natcash" 
+                         role="button"
+                         tabindex="0"
+                         aria-label="Payer avec NatCash">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-green-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-university text-white text-2xl" aria-hidden="true"></i>
+                            </div>
+                            <h3 class="font-serif text-2xl font-bold text-gray-900 mb-2">NatCash</h3>
+                            <p class="text-gray-600 mb-4">Cliquez ici pour payer avec NatCash en toute simplicité.</p>
+                            <div class="bg-white/50 px-4 py-2 rounded-lg inline-block">
+                                <span class="text-sm font-medium text-green-700">Fiable et pratique</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Modal de paiement professionnel -->
+                <div  id="payment-popup" class="hidden fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4" aria-modal="true" role="dialog">
+                    <div  style="height: 95%;" class="bg-white rounded-xl max-w-md w-full overflow-hidden shadow-xl transform transition-all duration-300">
+                        <!-- En-tête avec titre et bouton fermer -->
+                        <div class="flex items-center justify-between p-6 border-b border-gray-100">
+                            <h3 id="popup-title" class="text-xl font-bold text-gray-900"></h3>
+                            <button id="close-popup" class="text-gray-400 hover:text-gray-500 focus:outline-none">
+                                <i class="fas fa-times text-xl"></i>
+                                <span class="sr-only">Fermer</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Contenu principal -->
+                        <div class="p-6 space-y-6">
+                            <!-- Instructions -->
+                            <div class="bg-blue-50 rounded-lg p-4">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-info-circle text-blue-500 text-xl"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-blue-700">
+                                            <span class="font-medium">Instructions :</span> 
+                                            <span id="payment-instructions">Effectuez le paiement via l'application mobile puis confirmez ci-dessous.</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Détails du paiement -->
+                            <div class="space-y-4">
+                                <div class="flex justify-between ">
+                                    <span class="text-gray-600">Destinataire</span>
+                                    <span class="font-medium"> <br>  Pour Moncash: (509) 3781-0644 <br> Nom: MILLIEN LUCSON
+                                 <br>   Pour Natcash : (509) 3313-7321 <br> Nom: MILLIEN LUCSON</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Numéro</span>
+                                    <span class="font-medium" id="payment-number">+509 xxxx-xxxx</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Montant</span>
+                                    <div class="flex items-center">
+                                        <span class="text-gray-500 mr-1">HTG</span>
+                                        <input type="number" id="payment-amount" class="w-24 px-2 py-1 border border-gray-300 rounded text-right font-medium text-primary-600 focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="0">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                                        
+                        </div>
+                        
+                        <!-- Pied de page avec actions -->
+                        <div class="bg-gray-50 px-6 py-4 border-t border-gray-100 flex flex-col sm:flex-row-reverse space-y-3 sm:space-y-0 sm:space-x-3 sm:space-x-reverse">
+                            <button id="confirm-payment" class="w-full sm:w-auto bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                J'ai effectué le paiement
+                            </button>
+                            <button id="cancel-payment" class="w-full sm:w-auto bg-white hover:bg-gray-50 text-gray-700 px-6 py-3 rounded-lg font-medium border border-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+                                Annuler
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Formulaire de confirmation -->
+                <div id="confirmation-form" class="hidden bg-gray-50 rounded-2xl p-6 md:p-8 fade-in">
+                    <h3 class="font-serif text-2xl font-bold text-gray-900 mb-6 text-center">Confirmez votre paiement</h3>
+                    
+                    <form id="payment-confirmation-form" class="space-y-4 md:space-y-6">
+                        <div>
+                            <label for="fullname" class="block text-sm font-medium text-gray-700 mb-2">Nom complet *</label>
+                            <input type="text" id="fullname" name="fullname" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label for="whatsapp" class="block text-sm font-medium text-gray-700 mb-2">Numéro WhatsApp *</label>
+                            <input type="tel" id="whatsapp" name="whatsapp" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email pour le reçu (optionnel)</label>
+                            <input type="email" id="email" name="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label for="comment" class="block text-sm font-medium text-gray-700 mb-2">Commentaire personnalisé (optionnel)</label>
+                            <textarea id="comment" name="comment" rows="3" placeholder="Ex: nom du site, nom du projet..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"></textarea>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <input id="send-receipt" name="send-receipt" type="checkbox" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded" checked>
+                            <label for="send-receipt" class="ml-2 block text-sm text-gray-700">
+                                Je m'engage à envoyer une copie du reçu par WhatsApp
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 md:py-4 rounded-lg font-semibold transition-colors focus:outline-none focus:ring-4 focus:ring-primary-300">
+                            <i class="fas fa-check-circle mr-2" aria-hidden="true"></i>
+                            Confirmer le paiement et recevoir mon reçu
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Citation du jour -->
+    <section class="py-16 md:py-20 bg-gradient-to-r from-primary-600 to-accent-600">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center fade-in">
+                <div class="mb-6 md:mb-8" aria-hidden="true">
+                    <i class="fas fa-quote-left text-4xl text-white/30"></i>
+                </div>
+                <blockquote class="font-serif text-2xl md:text-3xl font-light text-white mb-6 md:mb-8 leading-relaxed">
+                    "L'innovation distingue un leader d'un suiveur. Chaque projet web est une opportunité de créer quelque chose d'unique."
+                </blockquote>
+                <cite class="text-white/80 font-medium">Steve Jobs - Inspiration pour nos créations</cite>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Services Cards -->
+    <section id="services" class="py-16 hidden md:py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12 md:mb-16 fade-in">
+                <h2 class="font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-4">Nos Services</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Des solutions web sur mesure pour faire grandir votre entreprise
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                <!-- Service 1 -->
+                <article class="bg-white border border-gray-200 rounded-2xl p-6 md:p-8 card-hover fade-in">
+                    <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-6" aria-hidden="true">
+                        <i class="fas fa-laptop-code text-primary-600 text-xl"></i>
+                    </div>
+                    <h3 class="font-serif text-xl font-bold text-gray-900 mb-3">Sites Web Professionnels</h3>
+                    <p class="text-gray-600 mb-4 leading-relaxed">
+                        Création de sites web modernes, responsives et optimisés pour votre activité.
+                    </p>
+                    <a href="#contact" class="text-primary-600 font-semibold hover:text-primary-700 transition-colors inline-flex items-center">
+                        En savoir plus <i class="fas fa-arrow-right ml-1" aria-hidden="true"></i>
+                    </a>
+                </article>
+                
+                <!-- Service 2 -->
+                <article class="bg-white border border-gray-200 rounded-2xl p-6 md:p-8 card-hover fade-in">
+                    <div class="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center mb-6" aria-hidden="true">
+                        <i class="fas fa-shopping-cart text-accent-600 text-xl"></i>
+                    </div>
+                    <h3 class="font-serif text-xl font-bold text-gray-900 mb-3">E-commerce</h3>
+                    <p class="text-gray-600 mb-4 leading-relaxed">
+                        Boutiques en ligne complètes pour vendre vos produits sur internet.
+                    </p>
+                    <a href="#contact" class="text-accent-600 font-semibold hover:text-accent-700 transition-colors inline-flex items-center">
+                        En savoir plus <i class="fas fa-arrow-right ml-1" aria-hidden="true"></i>
+                    </a>
+                </article>
+                
+                <!-- Service 3 -->
+                <article class="bg-white border border-gray-200 rounded-2xl p-6 md:p-8 card-hover fade-in">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-6" aria-hidden="true">
+                        <i class="fas fa-mobile-alt text-green-600 text-xl"></i>
+                    </div>
+                    <h3 class="font-serif text-xl font-bold text-gray-900 mb-3">Optimisation Mobile</h3>
+                    <p class="text-gray-600 mb-4 leading-relaxed">
+                        Sites parfaitement adaptés aux smartphones et tablettes.
+                    </p>
+                    <a href="#contact" class="text-green-600 font-semibold hover:text-green-700 transition-colors inline-flex items-center">
+                        En savoir plus <i class="fas fa-arrow-right ml-1" aria-hidden="true"></i>
+                    </a>
+                </article>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Newsletter Section -->
+    <section class="py-16 md:py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="max-w-2xl mx-auto text-center fade-in">
+                <h2 class="font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Restez informé
+                </h2>
+                <p class="text-lg text-gray-600 mb-6 md:mb-8">
+                    Recevez nos conseils et actualités sur le développement web
+                </p>
+                
+                <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                    <label for="newsletter-email" class="sr-only">Votre adresse email</label>
+                    <input 
+                        id="newsletter-email"
+                        type="email" 
+                        placeholder="Votre adresse email"
+                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        required
+                    >
+                    <button 
+                        type="submit"
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors whitespace-nowrap focus:outline-none focus:ring-4 focus:ring-primary-300"
+                    >
+                        S'inscrire
+                    </button>
+                </form>
+                
+                <p class="text-sm text-gray-500 mt-3">
+                    Pas de spam, désabonnement en un clic
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer id="contact" class="bg-gray-900 text-white py-12 md:py-16">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+                <!-- Logo et description -->
+                <div class="lg:col-span-2">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <img src="image.png" style="width: 55px; height: 55px;" alt="">
+                        <span class="font-serif font-bold text-xl">flagshipgroup</span>
+                    </div>
+                    <p class="text-gray-300 mb-6 leading-relaxed">
+                       Une organisation socio-économique qui sert à intégrer les jeunes Haïtiens dans le Domaine entrepreneurial
+                    </p>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-shield-alt text-green-400" aria-hidden="true"></i>
+                        <span class="text-sm text-gray-300">Site sécurisé - vos données sont confidentielles</span>
+                    </div>
+                </div>
+                
+                <!-- Contact -->
+                <div>
+                    <h3 class="font-serif font-bold text-lg mb-4">Contact</h3>
+                    <div class="space-y-3">
+                        <a href="https://wa.me/50941838348" class="flex items-center text-gray-300 hover:text-white transition-colors">
+                            <i class="fab fa-whatsapp mr-3 text-green-400" aria-hidden="true"></i>
+                            WhatsApp Rapide
+                        </a>
+                        <a href="mailto:contact@vitchwebstudio.com" class="flex items-center text-gray-300 hover:text-white transition-colors">
+                            <i class="fas fa-envelope mr-3 text-primary-400" aria-hidden="true"></i>
+                            Email
+                        </a>
+                        <div class="flex items-center text-gray-300">
+                            <i class="fas fa-map-marker-alt mr-3 text-accent-400" aria-hidden="true"></i>
+                            Saint-Marc, Haïti
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Réseaux sociaux -->
+                <div>
+                    <h3 class="font-serif font-bold text-lg mb-4">Suivez-nous</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-pink-600 rounded-lg flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-pink-400" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-blue-400 rounded-lg flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-blue-300" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Copyright -->
+            <div class="border-t border-gray-800 pt-8 text-center">
+                <p class="text-gray-400">
+                    © 2024 flagshipgroup. Tous droits réservés. 
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Anime.js CDN (chargé en bas de page pour la performance) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <!-- JavaScript -->
+    <script>
+        // Configuration des animations
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Initialisation de jsPDF
+            const { jsPDF } = window.jspdf;
+            
+            // Animation d'entrée pour les éléments
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        anime({
+                            targets: entry.target,
+                            opacity: [0, 1],
+                            translateY: [20, 0],
+                            duration: 800,
+                            easing: 'easeOutQuart',
+                            delay: anime.stagger(100)
+                        });
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Menu mobile
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                this.setAttribute('aria-expanded', !isExpanded);
+                mobileMenu.classList.toggle('hidden');
+                
+                // Animation du menu mobile
+                if (!mobileMenu.classList.contains('hidden')) {
+                    anime({
+                        targets: mobileMenu,
+                        opacity: [0, 1],
+                        height: [0, 'auto'],
+                        duration: 300,
+                        easing: 'easeOutQuad'
+                    });
+                }
+            });
+            
+            // Animation du header au scroll
+            let lastScroll = 0;
+            const header = document.getElementById('header');
+            
+            window.addEventListener('scroll', function() {
+                const currentScroll = window.pageYOffset;
+                
+                if (currentScroll <= 0) {
+                    header.classList.remove('shadow-md');
+                    return;
+                }
+                
+                if (currentScroll > lastScroll && currentScroll > 100) {
+                    // Scroll down
+                    header.classList.add('-translate-y-full');
+                    header.classList.remove('shadow-md');
+                } else if (currentScroll < lastScroll) {
+                    // Scroll up
+                    header.classList.remove('-translate-y-full');
+                    if (currentScroll > 100) {
+                        header.classList.add('shadow-md');
+                    }
+                }
+                
+                lastScroll = currentScroll;
+            });
+            
+            // Gestion des paiements
+            const paymentCards = document.querySelectorAll('.payment-card');
+            const paymentPopup = document.getElementById('payment-popup');
+            const popupContent = paymentPopup.querySelector('div > div');
+            const closePopupBtn = document.getElementById('close-popup');
+            const cancelPaymentBtn = document.getElementById('cancel-payment');
+            const confirmPaymentBtn = document.getElementById('confirm-payment');
+            const confirmationForm = document.getElementById('confirmation-form');
+            const paymentConfirmationForm = document.getElementById('payment-confirmation-form');
+            const paymentAmountInput = document.getElementById('payment-amount');
+            
+            function openPaymentPopup(paymentType) {
+                // Configurer le popup selon le type de paiement
+                const popupTitle = document.getElementById('popup-title');
+                const paymentNumber = document.getElementById('payment-number');
+                const paymentInstructions = document.getElementById('payment-instructions');
+                
+                if (paymentType === 'moncash') {
+                    popupTitle.textContent = 'Paiement par MonCash';
+                    paymentNumber.textContent = '+509 3857-0025';
+                    paymentInstructions.textContent = 'Ouvrez l\'application MonCash, allez dans "Envoyer de l\'argent" et entrez le numéro ci-dessus.';
+                } else {
+                    popupTitle.textContent = 'Paiement par NatCash';
+                    paymentNumber.textContent = '+509 3583 1923';
+                    paymentInstructions.textContent = 'Ouvrez l\'application NatCash, allez dans "Paiements" et entrez le numéro ci-dessus.';
+                }
+                
+                // Réinitialiser le montant
+                paymentAmountInput.value = '';
+                
+                // Afficher avec animation
+                paymentPopup.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                document.body.style.paddingRight = window.innerWidth - document.documentElement.clientWidth + 'px';
+                
+                popupContent.classList.add('modal-enter');
+                popupContent.classList.remove('modal-exit');
+                
+                // Focus sur le champ montant pour l'accessibilité
+                setTimeout(() => {
+                    paymentAmountInput.focus();
+                }, 300);
+            }
+            
+            function closePaymentPopup() {
+                popupContent.classList.remove('modal-enter');
+                popupContent.classList.add('modal-exit');
+                
+                setTimeout(() => {
+                    paymentPopup.classList.add('hidden');
+                    document.body.style.overflow = 'auto';
+                    document.body.style.paddingRight = '';
+                }, 200);
+            }
+            
+            paymentCards.forEach(card => {
+                // Gestion du clic
+                card.addEventListener('click', function() {
+                    const paymentType = this.dataset.payment;
+                    openPaymentPopup(paymentType);
+                });
+                
+                // Gestion du clavier pour l'accessibilité
+                card.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        const paymentType = this.dataset.payment;
+                        openPaymentPopup(paymentType);
+                    }
+                });
+            });
+            
+            closePopupBtn.addEventListener('click', closePaymentPopup);
+            cancelPaymentBtn.addEventListener('click', closePaymentPopup);
+            
+            // Fermer le popup en cliquant à l'extérieur
+            paymentPopup.addEventListener('click', function(e) {
+                if (e.target === paymentPopup) {
+                    closePaymentPopup();
+                }
+            });
+            
+            // Confirmation de paiement
+            confirmPaymentBtn.addEventListener('click', function() {
+                const amount = paymentAmountInput.value.trim();
+                
+                if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+                    alert('Veuillez entrer un montant valide');
+                    paymentAmountInput.focus();
+                    return;
+                }
+                
+                closePaymentPopup();
+                confirmationForm.classList.remove('hidden');
+                confirmationForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+                // Animation d'apparition du formulaire
+                anime({
+                    targets: confirmationForm,
+                    opacity: [0, 1],
+                    translateY: [20, 0],
+                    duration: 600,
+                    easing: 'easeOutQuart'
+                });
+            });
+            
+            // Génération du reçu PDF
+            paymentConfirmationForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Récupérer les données du formulaire
+                const fullname = document.getElementById('fullname').value;
+                const whatsapp = document.getElementById('whatsapp').value;
+                const email = document.getElementById('email').value;
+                const comment = document.getElementById('comment').value;
+                const sendReceipt = document.getElementById('send-receipt').checked;
+                const amount = paymentAmountInput.value;
+                const paymentMethod = document.getElementById('popup-title').textContent;
+                const paymentNumber = document.getElementById('payment-number').textContent;
+                
+                // Créer le PDF
+                const doc = new jsPDF();
+                
+                // En-tête du reçu
+                doc.setFontSize(22);
+                doc.setTextColor(14, 165, 233); // primary-500
+                doc.setFont('helvetica', 'bold');
+                doc.text('VITCH WEB STUO', 105, 20, { align: 'center' });
+                
+                doc.setFontSize(12);
+                doc.setTextColor(100, 100, 100);
+                doc.setFont('helvetica', 'normal');
+                doc.text('Reçu de paiement', 105, 30, { align: 'center' });
+                
+                // Ligne de séparation
+                doc.setDrawColor(200, 200, 200);
+                doc.line(20, 35, 190, 35);
+                
+                // Détails du client
+                doc.setFontSize(14);
+                doc.setTextColor(0, 0, 0);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Informations client:', 20, 45);
+                
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'normal');
+                doc.text(`Nom: ${fullname}`, 20, 55);
+                doc.text(`WhatsApp: ${whatsapp}`, 20, 65);
+                if (email) doc.text(`Email: ${email}`, 20, 75);
+                
+                // Détails du paiement
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Détails du paiement:', 20, 90);
+                
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'normal');
+                doc.text(`Date: ${new Date().toLocaleDateString('fr-FR')}`, 20, 100);
+                doc.text(`Méthode: ${paymentMethod}`, 20, 110);
+                doc.text(`Numéro utilisé: ${paymentNumber}`, 20, 120);
+                doc.text(`Montant: ${amount} HTG`, 20, 130);
+                doc.text(`Statut: Paiement confirmé`, 20, 140);
+                
+                if (comment) {
+                    doc.text(`Commentaire: ${comment}`, 20, 155);
+                }
+                
+                // Pied de page
+                doc.setFontSize(10);
+                doc.setTextColor(100, 100, 100);
+                doc.text('Merci pour votre confiance!', 105, 180, { align: 'center' });
+                doc.text('flagshipgroup - Création de sites web professionnels', 105, 185, { align: 'center' });
+                doc.text('Saint-Marc, Haïti | contact@vitchwebstudio.com', 105, 190, { align: 'center' });
+                
+                // Enregistrer le PDF
+                const pdfBlob = doc.output('blob');
+                const pdfUrl = URL.createObjectURL(pdfBlob);
+                
+                // Afficher un message de confirmation
+                const originalButtonText = paymentConfirmationForm.querySelector('button[type="submit"]').innerHTML;
+                const submitButton = paymentConfirmationForm.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Génération du reçu...';
+                
+                setTimeout(() => {
+                    // Télécharger le PDF automatiquement
+                    const link = document.createElement('a');
+                    link.href = pdfUrl;
+                    link.download = `Reçu_VitchWebStudio_${new Date().toISOString().slice(0,10)}.pdf`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // Réinitialiser le formulaire
+                    submitButton.innerHTML = originalButtonText;
+                    submitButton.disabled = false;
+                    
+                    // Afficher un message de succès
+                    const successDiv = document.createElement('div');
+                    successDiv.className = 'bg-green-50 border border-green-200 rounded-lg p-4 mb-6';
+                    successDiv.innerHTML = `
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-green-800">Paiement confirmé avec succès!</h3>
+                                <div class="mt-2 text-sm text-green-700">
+                                    <p>Votre reçu de ${amount} HTG a été généré et téléchargé. ${sendReceipt ? 'Merci de nous envoyer une copie du reçu par WhatsApp.' : ''}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    paymentConfirmationForm.parentNode.insertBefore(successDiv, paymentConfirmationForm);
+                    
+                    // Faire défiler vers le message
+                    successDiv.scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Réinitialiser le formulaire après 5 secondes
+                    setTimeout(() => {
+                        paymentConfirmationForm.reset();
+                        confirmationForm.classList.add('hidden');
+                        successDiv.remove();
+                    }, 10000);
+                    
+                }, 1500);
+            });
+            
+            // Animation du survol des cartes
+            paymentCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    anime({
+                        targets: this,
+                        scale: 1.02,
+                        duration: 300,
+                        easing: 'easeOutQuad'
+                    });
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    anime({
+                        targets: this,
+                        scale: 1,
+                        duration: 300,
+                        easing: 'easeOutQuad'
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
