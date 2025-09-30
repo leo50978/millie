@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Échange Pam | MonCash ↔ NatCash Instantané</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <style>
+        :root {
+            --primary-blue: #0B5FFF;
+            --primary-green: #00B894;
+            --dark-gray: #222222;
+            --light-gray: #f8f9fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark-gray);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+        
+        .section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(11, 95, 255, 0.2);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .faq-item {
+            border-bottom: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            transition: max-height 0.3s ease;
+        }
+        
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+        }
+        
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+            z-index: 9999;
+        }
+        
+        .floating-cta {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+            color: white;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .exchange-toggle {
+            display: flex;
+            background-color: #f1f5f9;
+            border-radius: 50px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .exchange-toggle button {
+            flex: 1;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            background: transparent;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .exchange-toggle button.active {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .testimonial-slider {
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .testimonial-track {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        
+        .testimonial-slide {
+            min-width: 100%;
+            padding: 0 15px;
+        }
+        
+        .star-rating {
+            color: #FFD700;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: modalAppear 0.3s ease-out;
+        }
+        
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        
+        .payment-step {
+            display: none;
+            margin-bottom: 20px;
+        }
+        
+        .payment-step.active {
+            display: block;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            margin: 0 5px;
+        }
+        
+        .step-dot.active {
+            background-color: var(--primary-blue);
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-blue);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .countdown {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--primary-blue);
+        }
+        
+        .transaction-id {
+            background-color: #f1f5f9;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        /* Styles pour l'ouverture */
+        #splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+        }
+
+        .main-content {
+            display: none;
+        }
+
+        .splash-hidden #splash {
+            display: none;
+        }
+
+        .splash-hidden .main-content {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <!-- SECTION 1: OPENING / SPLASH SCREEN -->
+    <section id="splash" class="min-h-screen flex items-center justify-center gradient-bg text-white relative overflow-hidden">
+        <div class="particles" id="particles-container"></div>
+        
+        <div class="container mx-auto px-4 text-center z-10">
+            <div class="max-w-3xl mx-auto">
+                <!-- Logo -->
+                <div class="mb-8" id="logo-container">
+                    <div class="w-32 h-32 mx-auto bg-white rounded-full flex items-center justify-center shadow-lg">
+                        <img src="echangepamlogo.png"  alt="">
+                    </div>
+                </div>
+                
+                <!-- Slogan -->
+                <h1 class="text-4xl md:text-5xl font-bold mb-4" id="slogan">
+                    Échange MonCash ↔ NatCash instantanément
+                </h1>
+                
+                <!-- Description -->
+                <p class="text-xl opacity-90 mb-8" id="description">
+                    La solution rapide, sécurisée et simple pour vos transferts d'argent
+                </p>
+            </div>
+        </div>
+        
+        <!-- Skip Button -->
+        <div class="absolute bottom-10 right-10">
+            <button id="skip-btn" class="bg-white text-blue-600 px-6 py-2 rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-300">
+                Passer l'intro
+            </button>
+        </div>
+    </section>
+
+    <!-- CONTENU PRINCIPAL -->
+    <div class="main-content">
+        <!-- SECTION 2: HERO / EXCHANGE -->
+        <section id="exchange" class="py-16 bg-gray-50 section">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-4">Échange maintenant</h2>
+                        <p class="text-lg text-gray-600">Choisissez le service, entrez le montant et recevez instantanément</p>
+                    </div>
+                    
+                    <!-- Exchange Form -->
+                    <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                        <!-- Toggle -->
+                        <div class="exchange-toggle">
+                            <button id="moncash-to-natcash" class="active">MonCash → NatCash</button>
+                            <button id="natcash-to-moncash">NatCash → MonCash</button>
+                        </div>
+                        
+                        <!-- Amount Input -->
+                        <div class="mb-6">
+                            <label class="block text-gray-700 mb-2 font-medium" for="amount">Montant à échanger</label>
+                            <div class="relative">
+                                <input type="number" id="amount" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Entrez le montant">
+                                <span class="absolute right-4 top-4 text-gray-500">HTG</span>
+                            </div>
+                            <div class="mt-2 text-sm text-gray-500">
+                                <span id="fee-display">Frais: 0 HTG</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Phone Input -->
+                        <div class="mb-6">
+                            <label class="block text-gray-700 mb-2 font-medium" for="phone">Numéro de téléphone du bénéficiaire</label>
+                            <input type="tel" id="phone" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Entrez le numéro qui recevra l'argent">
+                        </div>
+                        
+                        <!-- Security Indicator -->
+                        <div class="flex items-center mb-6 text-green-600">
+                            <i class="fas fa-lock mr-2"></i>
+                            <span class="text-sm">Transaction 100% sécurisée</span>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <button id="exchange-submit" class="w-full btn-primary text-white py-4 rounded-lg font-semibold text-lg">
+                            Suivant
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal de paiement -->
+        <div id="payment-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="text-xl font-bold">Instructions de paiement</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- Étape 1: Instructions de paiement -->
+                    <div id="payment-step-1" class="payment-step active">
+                        <div class="step-indicator">
+                            <div class="step-dot active"></div>
+                            <div class="step-dot"></div>
+                            <div class="step-dot"></div>
+                        </div>
+                        
+                        <h4 class="text-lg font-semibold mb-4">Étape 1: Effectuez le paiement</h4>
+                        
+                        <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                            <p class="font-medium mb-2">Envoyez <span id="payment-amount" class="font-bold">0 HTG</span> (montant + frais) au numéro:</p>
+                            <div id="payment-number-container">
+                                <!-- Le numéro sera affiché dynamiquement selon le type d'échange -->
+                            </div>
+                            <p class="text-sm text-gray-600 mt-2">Nom: <span id="payment-name">-</span></p>
+                        </div>
+                        
+                        <div class="bg-yellow-50 p-4 rounded-lg mb-4">
+                            <p class="font-medium mb-2">Important:</p>
+                            <ul class="list-disc pl-5 text-sm text-gray-700">
+                                <li>Gardez le reçu de transaction</li>
+                                <li>Notez l'ID de transaction</li>
+                                <li>Notez la date et l'heure exactes</li>
+                            </ul>
+                        </div>
+                        
+                        <p class="text-sm text-gray-600 mb-4">Une fois le paiement effectué, cliquez sur "J'ai payé" pour continuer.</p>
+                    </div>
+                    
+                    <!-- Étape 2: Détails de transaction -->
+                    <div id="payment-step-2" class="payment-step">
+                        <div class="step-indicator">
+                            <div class="step-dot"></div>
+                            <div class="step-dot active"></div>
+                            <div class="step-dot"></div>
+                        </div>
+                        
+                        <h4 class="text-lg font-semibold mb-4">Étape 2: Confirmez votre paiement</h4>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2 font-medium" for="transaction-id">ID de transaction</label>
+                            <input type="text" id="transaction-id" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Ex: 8A7B9C2D">
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-gray-700 mb-2 font-medium" for="transaction-date">Date</label>
+                                <input type="date" id="transaction-date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 mb-2 font-medium" for="transaction-time">Heure</label>
+                                <input type="time" id="transaction-time" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2 font-medium" for="transaction-notes">Notes supplémentaires (optionnel)</label>
+                            <textarea id="transaction-notes" rows="2" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Informations supplémentaires..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Étape 3: Confirmation en attente -->
+                    <div id="payment-step-3" class="payment-step">
+                        <div class="step-indicator">
+                            <div class="step-dot"></div>
+                            <div class="step-dot"></div>
+                            <div class="step-dot active"></div>
+                        </div>
+                        
+                        <h4 class="text-lg font-semibold mb-4 text-center">Traitement en cours</h4>
+                        
+                        <div class="text-center">
+                            <div class="loading-spinner"></div>
+                            <p class="mb-4">Votre transaction est en cours de traitement</p>
+                            
+                            <div class="countdown" id="countdown">10:00</div>
+                            
+                            <p class="text-sm text-gray-600 mb-4">Veuillez patienter pendant que nous confirmons votre paiement. Vous recevrez les fonds sur le numéro indiqué une fois la confirmation reçue.</p>
+                            
+                            <div class="transaction-id">
+                                ID: <span id="generated-transaction-id">PAM-XXXXXX</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="prev-step" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Précédent</button>
+                    <button id="next-step" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">J'ai payé</button>
+                    <button id="finish-step" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700" style="display: none;">Terminer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Autres sections -->
+        <!-- SECTION 3: HOW IT WORKS -->
+        <section id="how-it-works" class="py-16 bg-white section">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Comment ça marche ?</h2>
+                    <p class="text-lg text-gray-600">3 étapes simples pour échanger votre argent</p>
+                </div>
+                
+                <div class="max-w-4xl mx-auto">
+                    <!-- Step 1 -->
+                    <div class="flex flex-col md:flex-row items-center mb-12 step-item">
+                        <div class="step-number mb-4 md:mb-0">1</div>
+                        <div class="flex-1 text-center md:text-left">
+                            <h3 class="text-xl font-semibold mb-2">Choisir le type d'échange</h3>
+                            <p class="text-gray-600">Sélectionnez MonCash vers NatCash ou l'inverse selon vos besoins</p>
+                        </div>
+                        <div class="mt-4 md:mt-0">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-exchange-alt text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2 -->
+                    <div class="flex flex-col md:flex-row items-center mb-12 step-item">
+                        <div class="step-number mb-4 md:mb-0">2</div>
+                        <div class="flex-1 text-center md:text-left">
+                            <h3 class="text-xl font-semibold mb-2">Entrer le montant et le numéro</h3>
+                            <p class="text-gray-600">Indiquez le montant à échanger et votre numéro de téléphone</p>
+                        </div>
+                        <div class="mt-4 md:mt-0">
+                            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-mobile-alt text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3 -->
+                    <div class="flex flex-col md:flex-row items-center step-item">
+                        <div class="step-number mb-4 md:mb-0">3</div>
+                        <div class="flex-1 text-center md:text-left">
+                            <h3 class="text-xl font-semibold mb-2">Confirmer et recevoir instantanément</h3>
+                            <p class="text-gray-600">Validez la transaction et recevez vos fonds en quelques secondes</p>
+                        </div>
+                        <div class="mt-4 md:mt-0">
+                            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check-circle text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: BENEFITS -->
+        <section id="benefits" class="py-16 bg-gray-50 section">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Pourquoi choisir Échange Pam ?</h2>
+                    <p class="text-lg text-gray-600">Rapide, sûr et simple</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+                    <!-- Benefit 1 -->
+                    <div class="bg-white rounded-xl p-6 shadow-md card-hover benefit-item">
+                        <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-bolt text-blue-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Rapidité</h3>
+                        <p class="text-gray-600 mb-4">Transactions traitées en quelques secondes, 24h/24 et 7j/7</p>
+                        <a href="#" class="text-blue-600 font-medium flex items-center">
+                            En savoir plus
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- Benefit 2 -->
+                    <div class="bg-white rounded-xl p-6 shadow-md card-hover benefit-item">
+                        <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-shield-alt text-green-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Sécurité</h3>
+                        <p class="text-gray-600 mb-4">Protection des données et transactions chiffrées de bout en bout</p>
+                        <a href="#" class="text-blue-600 font-medium flex items-center">
+                            En savoir plus
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- Benefit 3 -->
+                    <div class="bg-white rounded-xl p-6 shadow-md card-hover benefit-item">
+                        <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-mobile text-purple-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Simplicité</h3>
+                        <p class="text-gray-600 mb-4">Interface intuitive, processus simplifié en seulement 3 étapes</p>
+                        <a href="#" class="text-blue-600 font-medium flex items-center">
+                            En savoir plus
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- Benefit 4 -->
+                    <div class="bg-white rounded-xl p-6 shadow-md card-hover benefit-item">
+                        <div class="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-headset text-orange-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Support client</h3>
+                        <p class="text-gray-600 mb-4">Assistance disponible par WhatsApp, email et téléphone</p>
+                        <a href="#" class="text-blue-600 font-medium flex items-center">
+                            En savoir plus
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: TESTIMONIALS -->
+        <section id="testimonials" class="py-16 bg-white section">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Ils nous font confiance</h2>
+                    <p class="text-lg text-gray-600">Découvrez les avis de nos clients satisfaits</p>
+                </div>
+                
+                <div class="max-w-4xl mx-auto">
+                    <div class="testimonial-slider">
+                        <div class="testimonial-track" id="testimonial-track">
+                            <!-- Testimonial 1 -->
+                            <div class="testimonial-slide">
+                                <div class="bg-gray-50 rounded-xl p-8 text-center">
+                                    <div class="flex justify-center mb-4 star-rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <p class="text-gray-700 italic mb-6">"J'utilise Échange Pam depuis 6 mois et je n'ai jamais eu de problème. Les transactions sont vraiment instantanées et les frais sont raisonnables. Je recommande !"</p>
+                                    <div class="flex items-center justify-center">
+                                        <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold mr-3">MJ</div>
+                                        <div>
+                                            <h4 class="font-semibold">Marie Joseph</h4>
+                                            <p class="text-gray-500 text-sm">Commerçante</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Testimonial 2 -->
+                            <div class="testimonial-slide">
+                                <div class="bg-gray-50 rounded-xl p-8 text-center">
+                                    <div class="flex justify-center mb-4 star-rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </div>
+                                    <p class="text-gray-700 italic mb-6">"Service rapide et fiable. J'apprécie particulièrement la simplicité d'utilisation et le support client réactif. Une solution parfaite pour mes transferts réguliers."</p>
+                                    <div class="flex items-center justify-center">
+                                        <div class="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center text-white font-bold mr-3">PD</div>
+                                        <div>
+                                            <h4 class="font-semibold">Pierre Daniel</h4>
+                                            <p class="text-gray-500 text-sm">Étudiant</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Testimonial 3 -->
+                            <div class="testimonial-slide">
+                                <div class="bg-gray-50 rounded-xl p-8 text-center">
+                                    <div class="flex justify-center mb-4 star-rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <p class="text-gray-700 italic mb-6">"Enfin un service qui comprend nos besoins ! Transactions rapides, interface claire et sécurisée. Je n'utilise plus que Échange Pam pour mes échanges MonCash/NatCash."</p>
+                                    <div class="flex items-center justify-center">
+                                        <div class="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold mr-3">SL</div>
+                                        <div>
+                                            <h4 class="font-semibold">Sophie Laurent</h4>
+                                            <p class="text-gray-500 text-sm">Professionnelle</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation Dots -->
+                    <div class="flex justify-center mt-6">
+                        <button class="testimonial-dot w-3 h-3 rounded-full bg-blue-600 mx-1 active" data-index="0"></button>
+                        <button class="testimonial-dot w-3 h-3 rounded-full bg-gray-300 mx-1" data-index="1"></button>
+                        <button class="testimonial-dot w-3 h-3 rounded-full bg-gray-300 mx-1" data-index="2"></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: FAQ -->
+<section id="faq" class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <!-- Titre -->
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">Questions fréquentes</h2>
+      <p class="text-lg text-gray-600">Trouvez rapidement des réponses à vos questions</p>
+    </div>
+
+    <div class="max-w-3xl mx-auto space-y-4">
+      <!-- FAQ Item -->
+      <div class="faq-item bg-white rounded-lg shadow-sm overflow-hidden">
+        <button 
+          class="faq-question w-full text-left p-6 font-semibold flex justify-between items-center focus:outline-none"
+          aria-expanded="false"
+        >
+          <span>Quels sont les frais appliqués ?</span>
+          <svg class="w-5 h-5 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+        <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300 px-6" aria-hidden="true">
+          <p class="text-gray-600 py-4">
+            Nos frais sont parmi les plus compétitifs du marché. Ils varient en fonction du montant de la transaction mais ne dépassent jamais 10%. Vous pouvez voir les frais exacts avant de confirmer chaque transaction.
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ Item -->
+      <div class="faq-item bg-white rounded-lg shadow-sm overflow-hidden">
+        <button 
+          class="faq-question w-full text-left p-6 font-semibold flex justify-between items-center focus:outline-none"
+          aria-expanded="false"
+        >
+          <span>Combien de temps pour recevoir l'argent ?</span>
+          <svg class="w-5 h-5 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+        <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300 px-6" aria-hidden="true">
+          <p class="text-gray-600 py-4">
+            La majorité des transactions sont traitées instantanément. Dans de rares cas (problèmes réseau, maintenance), cela peut prendre jusqu'à 15 minutes. Vous recevrez une notification dès que les fonds seront disponibles.
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ Item -->
+      <div class="faq-item bg-white rounded-lg shadow-sm overflow-hidden">
+        <button 
+          class="faq-question w-full text-left p-6 font-semibold flex justify-between items-center focus:outline-none"
+          aria-expanded="false"
+        >
+          <span>Est-ce sécurisé ?</span>
+          <svg class="w-5 h-5 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+        <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300 px-6" aria-hidden="true">
+          <p class="text-gray-600 py-4">
+            Absolument. Nous utilisons un chiffrement de bout en bout pour protéger vos données et transactions. De plus, nous respectons strictement les réglementations en vigueur concernant les services de transfert d'argent.
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ Item -->
+      <div class="faq-item bg-white rounded-lg shadow-sm overflow-hidden">
+        <button 
+          class="faq-question w-full text-left p-6 font-semibold flex justify-between items-center focus:outline-none"
+          aria-expanded="false"
+        >
+          <span>Quelles sont les limites de transaction ?</span>
+          <svg class="w-5 h-5 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+        <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300 px-6" aria-hidden="true">
+          <p class="text-gray-600 py-4">
+            Pour les nouveaux utilisateurs, la limite est de 10 000 HTG par transaction et 50 000 HTG par jour. Après vérification, ces limites peuvent être augmentées jusqu'à 100 000 HTG par transaction et 500 000 HTG par jour.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const questions = document.querySelectorAll(".faq-question");
+
+  questions.forEach(button => {
+    button.addEventListener("click", () => {
+      const answer = button.nextElementSibling;
+      const icon = button.querySelector("svg");
+      const expanded = button.getAttribute("aria-expanded") === "true";
+
+      // Fermer tous les autres avant d’ouvrir
+      document.querySelectorAll(".faq-answer").forEach(ans => {
+        ans.style.maxHeight = null;
+        ans.setAttribute("aria-hidden", "true");
+      });
+      document.querySelectorAll(".faq-question").forEach(q => {
+        q.setAttribute("aria-expanded", "false");
+        q.querySelector("svg").classList.remove("rotate-180");
+      });
+
+      // Toggle actuel
+      if (!expanded) {
+        answer.style.maxHeight = answer.scrollHeight + "px";
+        answer.setAttribute("aria-hidden", "false");
+        button.setAttribute("aria-expanded", "true");
+        icon.classList.add("rotate-180");
+      }
+    });
+  });
+});
+</script>
+
+
+
+        <!-- SECTION 7: CONTACT -->
+      <section id="contact" class="py-16 bg-white section">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Besoin d'aide ? Contactez-nous</h2>
+            <p class="text-lg text-gray-600">Notre équipe est là pour vous accompagner</p>
+        </div>
+        
+        <div class="max-w-2xl mx-auto">
+            <!-- Contact Form -->
+            <div class="bg-gray-50 rounded-xl p-6">
+                <!-- Remplace ton FORM_ID par celui fourni par Formspree -->
+                <form id="contact-form" action="https://formspree.io/f/mpwjajva" method="POST">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2 font-medium" for="name">Nom complet</label>
+                        <input type="text" name="name" id="name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2 font-medium" for="email">Email</label>
+                        <input type="email" name="email" id="email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2 font-medium" for="message">Message</label>
+                        <textarea name="message" id="message" rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-semibold">
+                        Envoyer le message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+        <!-- SECTION 8: FOOTER -->
+        <footer class="bg-gray-800 text-white py-12 section">
+            <div class="container mx-auto px-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <!-- Logo and Description -->
+                    <div class="md:col-span-1">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center mr-3">
+                                <img src="echangepamlogo.png" alt="">
+                            </div>
+                            <span class="text-xl font-bold">Échange Pam</span>
+                        </div>
+                        <p class="text-gray-400 mb-4">La solution rapide et sécurisée pour vos échanges MonCash ↔ NatCash</p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Links -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Liens rapides</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#exchange" class="text-gray-400 hover:text-white transition-colors">Échange</a></li>
+                            <li><a href="#how-it-works" class="text-gray-400 hover:text-white transition-colors">Comment ça marche</a></li>
+                            <li><a href="#benefits" class="text-gray-400 hover:text-white transition-colors">Avantages</a></li>
+                            <li><a href="#faq" class="text-gray-400 hover:text-white transition-colors">FAQ</a></li>
+                            <li><a href="#contact" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Legal -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Légal</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Mentions légales</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Politique de confidentialité</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Conditions d'utilisation</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white transition-colors">CGV</a></li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Newsletter -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Newsletter</h3>
+                        <p class="text-gray-400 mb-4">Inscrivez-vous pour recevoir nos actualités</p>
+                        <div class="flex">
+                            <input type="email" placeholder="Votre email" class="bg-gray-700 text-white px-4 py-2 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                            <button class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-r-lg transition-colors">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                    <p>&copy; 2025 Échange Pam. Tous droits réservés.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Floating CTA -->
+        <div class="floating-cta">
+            <a href="#exchange" class="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-colors">
+                <i class="fas fa-exchange-alt"></i>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyANd0tZl-6P6l84ab-FSRIX9ISPd_YCe6I",
+            authDomain: "cpieo-99bd5.firebaseapp.com",
+            projectId: "cpieo-99bd5",
+            storageBucket: "cpieo-99bd5.firebasestorage.app",
+            messagingSenderId: "405125968337",
+            appId: "1:405125968337:web:7d5f74b710cc23b84270f0"
+        };
+
+        // Initialiser Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Variables globales
+        let currentPaymentStep = 1;
+        let transactionData = {};
+        let countdownInterval;
+
+        // Informations des comptes
+        const accountInfo = {
+            'moncash-to-natcash': {
+                number: '509 38570025',
+                name: 'Carl Riverson Alexis',
+                service: 'MonCash'
+            },
+            'natcash-to-moncash': {
+                number: '509 35831923', 
+                name: 'Jetro Ted Filostin',
+                service: 'NatCash'
+            }
+        };
+
+        // Initialisation des animations et interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Démarrer l'animation de l'opening
+            animateSplashScreen();
+            
+            // Configuration des écouteurs d'événements
+            setupEventListeners();
+            
+            // Initialisation de l'observateur d'intersection pour les animations on-scroll
+            initIntersectionObserver();
+            
+            // Initialisation du slider de témoignages
+            initTestimonialSlider();
+        });
+        
+        // Configuration des écouteurs d'événements
+        function setupEventListeners() {
+            // Bouton Skip de la section Splash
+            document.getElementById('skip-btn').addEventListener('click', function() {
+                skipSplashScreen();
+            });
+            
+            // Toggle d'échange
+            const toggleButtons = document.querySelectorAll('.exchange-toggle button');
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    toggleButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Animation du changement
+                    anime({
+                        targets: '.exchange-toggle button.active',
+                        scale: [0.9, 1],
+                        duration: 300,
+                        easing: 'easeOutBack'
+                    });
+                });
+            });
+            
+            // Calcul des frais en temps réel
+            document.getElementById('amount').addEventListener('input', function() {
+                const amount = parseFloat(this.value) || 0;
+                const fee = amount * 0.10; // 10% de frais
+                document.getElementById('fee-display').textContent = `Frais: ${fee.toFixed(2)} HTG (10%)`;
+            });
+            
+            // Soumission du formulaire d'échange
+            document.getElementById('exchange-submit').addEventListener('click', function() {
+                const amount = document.getElementById('amount').value;
+                const phone = document.getElementById('phone').value;
+                
+                if (!amount || !phone) {
+                    // Animation d'erreur
+                    anime({
+                        targets: '#exchange-submit',
+                        translateX: [-10, 10, -10, 10, 0],
+                        duration: 500,
+                        easing: 'easeInOutSine'
+                    });
+                    alert("Veuillez remplir tous les champs obligatoires.");
+                    return;
+                }
+                
+                // Stocker les données de transaction
+                const exchangeType = document.querySelector('.exchange-toggle button.active').id;
+                transactionData = {
+                    amount: parseFloat(amount),
+                    phone: phone,
+                    exchangeType: exchangeType,
+                    timestamp: new Date(),
+                    status: 'pending'
+                };
+                
+                // Calculer le montant total à payer
+                const fee = transactionData.amount * 0.10; // 10% de frais
+                const totalAmount = transactionData.amount + fee;
+                
+                // Mettre à jour l'affichage du montant dans le modal
+                document.getElementById('payment-amount').textContent = `${totalAmount.toFixed(2)} HTG`;
+                
+                // Mettre à jour les informations de paiement selon le type d'échange
+                updatePaymentInfo(exchangeType);
+                
+                // Ouvrir le modal de paiement
+                openPaymentModal();
+            });
+            
+            // Gestion du modal de paiement
+            const paymentModal = document.getElementById('payment-modal');
+            const closeModalBtn = document.querySelector('.close-modal');
+            const prevStepBtn = document.getElementById('prev-step');
+            const nextStepBtn = document.getElementById('next-step');
+            const finishStepBtn = document.getElementById('finish-step');
+            
+            // Fermer le modal
+            closeModalBtn.addEventListener('click', function() {
+                closePaymentModal();
+            });
+            
+            // Clic en dehors du modal pour fermer
+            window.addEventListener('click', function(event) {
+                if (event.target === paymentModal) {
+                    closePaymentModal();
+                }
+            });
+            
+            // Bouton précédent
+            prevStepBtn.addEventListener('click', function() {
+                if (currentPaymentStep > 1) {
+                    goToStep(currentPaymentStep - 1);
+                }
+            });
+            
+            // Bouton suivant
+            nextStepBtn.addEventListener('click', function() {
+                if (currentPaymentStep === 1) {
+                    goToStep(2);
+                } else if (currentPaymentStep === 2) {
+                    // Valider les informations de transaction
+                    const transactionId = document.getElementById('transaction-id').value;
+                    const transactionDate = document.getElementById('transaction-date').value;
+                    const transactionTime = document.getElementById('transaction-time').value;
+                    
+                    if (!transactionId || !transactionDate || !transactionTime) {
+                        alert("Veuillez remplir tous les champs obligatoires.");
+                        return;
+                    }
+                    
+                    // Mettre à jour les données de transaction
+                    transactionData.transactionId = transactionId;
+                    transactionData.transactionDate = transactionDate;
+                    transactionData.transactionTime = transactionTime;
+                    transactionData.notes = document.getElementById('transaction-notes').value;
+                    
+                    // Générer un ID de transaction unique
+                    const generatedId = 'PAM-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+                    transactionData.generatedId = generatedId;
+                    document.getElementById('generated-transaction-id').textContent = generatedId;
+                    
+                    // Sauvegarder dans Firebase
+                    saveTransactionToFirebase();
+                    
+                    // Passer à l'étape 3
+                    goToStep(3);
+                    
+                    // Démarrer le compte à rebours
+                    startCountdown();
+                }
+            });
+            
+            // Bouton terminer
+            finishStepBtn.addEventListener('click', function() {
+                closePaymentModal();
+                alert("Votre transaction a été enregistrée. Vous recevrez une confirmation dès que le paiement sera vérifié.");
+                resetExchangeForm();
+            });
+        }
+
+        // Mettre à jour les informations de paiement selon le type d'échange
+        function updatePaymentInfo(exchangeType) {
+            const account = accountInfo[exchangeType];
+            const container = document.getElementById('payment-number-container');
+            
+            container.innerHTML = `
+                <p class="text-2xl font-bold text-center my-3">${account.number}</p>
+                <p class="text-sm text-gray-600">Via ${account.service}</p>
+            `;
+            
+            document.getElementById('payment-name').textContent = account.name;
+        }
+
+        // Fonction pour passer l'écran d'ouverture
+        function skipSplashScreen() {
+            anime({
+                targets: '#splash',
+                opacity: 0,
+                scale: 1.1,
+                duration: 800,
+                easing: 'easeInOutExpo',
+                complete: function() {
+                    document.body.classList.add('splash-hidden');
+                    // Faire défiler vers le haut pour s'assurer qu'on voit le contenu
+                    window.scrollTo(0, 0);
+                }
+            });
+        }
+        
+        // Ouvrir le modal de paiement
+        function openPaymentModal() {
+            const modal = document.getElementById('payment-modal');
+            modal.style.display = 'flex';
+            
+            // Réinitialiser les étapes
+            currentPaymentStep = 1;
+            goToStep(1);
+        }
+        
+        // Fermer le modal de paiement
+        function closePaymentModal() {
+            const modal = document.getElementById('payment-modal');
+            modal.style.display = 'none';
+            
+            // Arrêter le compte à rebours s'il est en cours
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+        }
+        
+        // Naviguer vers une étape spécifique
+        function goToStep(step) {
+            // Masquer toutes les étapes
+            document.querySelectorAll('.payment-step').forEach(stepEl => {
+                stepEl.classList.remove('active');
+            });
+            
+            // Afficher l'étape active
+            document.getElementById(`payment-step-${step}`).classList.add('active');
+            
+            // Mettre à jour les indicateurs d'étape
+            document.querySelectorAll('.step-dot').forEach((dot, index) => {
+                if (index === step - 1) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+            
+            // Mettre à jour les boutons
+            if (step === 1) {
+                document.getElementById('prev-step').style.display = 'none';
+                document.getElementById('next-step').style.display = 'block';
+                document.getElementById('next-step').textContent = "J'ai payé";
+                document.getElementById('finish-step').style.display = 'none';
+            } else if (step === 2) {
+                document.getElementById('prev-step').style.display = 'block';
+                document.getElementById('next-step').style.display = 'block';
+                document.getElementById('next-step').textContent = "Confirmer";
+                document.getElementById('finish-step').style.display = 'none';
+            } else if (step === 3) {
+                document.getElementById('prev-step').style.display = 'none';
+                document.getElementById('next-step').style.display = 'none';
+                document.getElementById('finish-step').style.display = 'block';
+            }
+            
+            currentPaymentStep = step;
+        }
+        
+        // Démarrer le compte à rebours de 10 minutes
+        function startCountdown() {
+            let minutes = 10;
+            let seconds = 0;
+            
+            countdownInterval = setInterval(function() {
+                // Mettre à jour l'affichage
+                document.getElementById('countdown').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Décrémenter le temps
+                if (seconds === 0) {
+                    if (minutes === 0) {
+                        // Temps écoulé
+                        clearInterval(countdownInterval);
+                        document.getElementById('countdown').textContent = "Temps écoulé";
+                        document.getElementById('finish-step').disabled = false;
+                    } else {
+                        minutes--;
+                        seconds = 59;
+                    }
+                } else {
+                    seconds--;
+                }
+            }, 1000);
+        }
+        
+        // Sauvegarder la transaction dans Firebase
+        function saveTransactionToFirebase() {
+            // Ajouter un timestamp pour le tri
+            transactionData.firebaseTimestamp = firebase.firestore.FieldValue.serverTimestamp();
+            
+            db.collection("transactions").add(transactionData)
+                .then((docRef) => {
+                    console.log("Transaction enregistrée avec ID: ", docRef.id);
+                    transactionData.firebaseId = docRef.id;
+                })
+                .catch((error) => {
+                    console.error("Erreur lors de l'enregistrement: ", error);
+                    alert("Une erreur s'est produite lors de l'enregistrement de votre transaction. Veuillez réessayer.");
+                });
+        }
+        
+        // Réinitialiser le formulaire d'échange
+        function resetExchangeForm() {
+            document.getElementById('amount').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('fee-display').textContent = 'Frais: 0 HTG';
+            transactionData = {};
+        }
+        
+        // Animation de la section Splash avec Anime.js
+        function animateSplashScreen() {
+            // Animation du logo
+            anime({
+                targets: '#logo-container',
+                scale: [0, 1],
+                rotate: '1turn',
+                duration: 1500,
+                easing: 'easeOutElastic(1, .8)'
+            });
+            
+            // Animation du slogan
+            anime({
+                targets: '#slogan',
+                translateY: [50, 0],
+                opacity: [0, 1],
+                duration: 1200,
+                delay: 500,
+                easing: 'easeOutExpo'
+            });
+            
+            // Animation de la description
+            anime({
+                targets: '#description',
+                translateY: [30, 0],
+                opacity: [0, 1],
+                duration: 1000,
+                delay: 800,
+                easing: 'easeOutExpo'
+            });
+            
+            // Animation du bouton Skip
+            anime({
+                targets: '#skip-btn',
+                translateY: [20, 0],
+                opacity: [0, 1],
+                duration: 800,
+                delay: 1200,
+                easing: 'easeOutExpo'
+            });
+            
+            // Création des particules animées
+            createParticles();
+
+            // Auto-skip après 5 secondes
+            setTimeout(() => {
+                skipSplashScreen();
+            }, 5000);
+        }
+        
+        // Création des particules pour l'arrière-plan de la section Splash
+        function createParticles() {
+            const container = document.getElementById('particles-container');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Position aléatoire
+                const size = Math.random() * 5 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                container.appendChild(particle);
+                
+                // Animation de la particule
+                anime({
+                    targets: particle,
+                    translateX: () => anime.random(-50, 50),
+                    translateY: () => anime.random(-50, 50),
+                    opacity: [0.2, 0.8, 0.2],
+                    duration: () => anime.random(3000, 6000),
+                    easing: 'easeInOutSine',
+                    loop: true,
+                    direction: 'alternate'
+                });
+            }
+        }
+        
+        // Initialisation de l'observateur d'intersection pour les animations on-scroll
+        function initIntersectionObserver() {
+            const sections = document.querySelectorAll('.section');
+            
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+            
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        }
+        
+        // Initialisation du slider de témoignages
+        function initTestimonialSlider() {
+            const track = document.getElementById('testimonial-track');
+            const slides = document.querySelectorAll('.testimonial-slide');
+            const dots = document.querySelectorAll('.testimonial-dot');
+            let currentIndex = 0;
+            
+            // Fonction pour mettre à jour le slider
+            function updateSlider() {
+                track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                
+                // Mise à jour des points indicateurs
+                dots.forEach((dot, index) => {
+                    if (index === currentIndex) {
+                        dot.classList.add('active', 'bg-blue-600');
+                        dot.classList.remove('bg-gray-300');
+                    } else {
+                        dot.classList.remove('active', 'bg-blue-600');
+                        dot.classList.add('bg-gray-300');
+                    }
+                });
+            }
+            
+            // Événements pour les points indicateurs
+            dots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    currentIndex = parseInt(this.getAttribute('data-index'));
+                    updateSlider();
+                });
+            });
+            
+            // Défilement automatique
+            setInterval(() => {
+                currentIndex = (currentIndex + 1) % slides.length;
+                updateSlider();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
