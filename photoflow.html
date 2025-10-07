@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galerie Photo Immersive</title>
+    
+    <!-- CDN Imports -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    
+    <style>
+        .scroll-container {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .scroll-container::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .snap-scroll {
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+        
+        .snap-section {
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .like-pulse {
+            animation: heartPulse 0.6s ease-in-out;
+        }
+        
+        @keyframes heartPulse {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.3); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .image-container {
+            background: linear-gradient(45deg, #1a202c, #2d3748);
+            position: relative;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #2d3748, #4a5568);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Styles pour l'écran de chargement */
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+        }
+
+        #loadingScreen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: #60a5fa;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white font-['Inter'] h-screen overflow-hidden">
+    
+    <!-- Écran de chargement -->
+    <div id="loadingScreen">
+        <div class="logo text-2xl font-bold mb-4">PHOTOFLOW</div>
+        <div class="loader"></div>
+        <div class="loader-text text-white text-lg">oui ou ka champion</div>
+    </div>
+
+    <!-- Éléments audio cachés - APPROCHE SIMPLIFIÉE -->
+    <audio id="scrollSound" preload="auto">
+        <source src="scrollsound.mp3" type="audio/wav">
+    </audio>
+    <audio id="likeSound" preload="auto">
+        <source src="likebouton.mp3" type="audio/wav">
+    </audio>
+    <audio id="shareSound" preload="auto">
+        <source src="bouton.mp3" type="audio/wav">
+    </audio>
+
+    <!-- Contenu principal -->
+    <main class="h-full overflow-y-auto snap-scroll scroll-container" id="mainContainer" style="opacity: 0;">
+        <!-- Les sections photos seront générées dynamiquement ici -->
+    </main>
+
+    <!-- Icône de classement fixe -->
+    <button id="rankingIcon" class="fixed top-6 right-6 bg-yellow-500 hover:bg-yellow-600 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 z-50 transform hover:scale-110">
+        <i class="fas fa-trophy text-white text-2xl"></i>
+    </button>
+
+    <!-- Modal de classement -->
+<div id="rankingModal" 
+     class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4 transition-opacity duration-300 ease-out overflow-y-auto">
+
+    <!-- Container avec limite de hauteur et scroll interne -->
+    <div class="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 
+                rounded-3xl shadow-2xl p-6 sm:p-8 w-full max-w-sm sm:max-w-md mx-auto 
+                border border-gray-700/50 my-10 max-h-[90vh] overflow-y-auto 
+                scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+
+        <!-- Header -->
+        <div class="sticky top-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-10 
+                    flex justify-between items-center mb-6 border-b border-gray-700/40 pb-3">
+            <h2 class="text-xl sm:text-2xl font-bold flex items-center text-white">
+                <i class="fas fa-trophy text-yellow-400 mr-2 sm:mr-3"></i>
+                Classement Général
+            </h2>
+            <button id="closeModal" 
+                    class="text-gray-400 hover:text-white transition-colors duration-200 text-lg sm:text-xl">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <!-- Ranking List -->
+        <div id="rankingList" class="space-y-4 mb-6">
+            <!-- Exemple de ligne (à remplacer dynamiquement) -->
+            <div class="flex justify-between items-center bg-gray-800/60 rounded-xl p-3 sm:p-4 hover:bg-gray-700/70 transition-colors">
+                <div class="flex items-center space-x-3">
+                    <span class="text-yellow-400 font-bold">#1</span>
+                    <span class="text-white font-semibold">John Doe</span>
+                </div>
+                <span class="text-gray-300 font-medium">980 pts</span>
+            </div>
+
+            <!-- exemple de scroll long -->
+            <div class="h-96"></div> <!-- à supprimer, juste pour tester le scroll -->
+        </div>
+        
+        <!-- Close Button -->
+        <button id="closeModalBtn" 
+                class="sticky bottom-0 w-full bg-gradient-to-r from-gray-700 to-gray-600 hover:from-gray-600 hover:to-gray-500 
+                       py-3 sm:py-3.5 rounded-xl font-semibold text-white shadow-lg 
+                       transition-all duration-200 hover:shadow-xl">
+            Fermer
+        </button>
+    </div>
+</div>
+
+
+    <script>
+        // =============================================
+        // CONFIGURATION
+        // =============================================
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyANd0tZl-6P6l84ab-FSRIX9ISPd_YCe6I",
+            authDomain: "cpieo-99bd5.firebaseapp.com",
+            projectId: "cpieo-99bd5",
+            storageBucket: "cpieo-99bd5.firebasestorage.app",
+            messagingSenderId: "405125968337",
+            appId: "1:405125968337:web:7d5f74b710cc23b84270f0"
+        };
+
+        const photos = [
+            {
+                id: 1,
+                url: "image1.jpg",
+                name: "Sarah M.",
+                theme: "Nature",
+                likes: 300,
+                liked: false
+            },
+            {
+                id: 2,
+                url: "image2.jpg",
+                name: "Karim B.",
+                theme: "Paysage",
+                likes: 301,
+                liked: false
+            },
+            {
+                id: 3,
+                url: "image3.jpg",
+                name: "junior509.",
+                theme: "Portrait",
+                likes: 509,
+                liked: false
+            },
+            {
+                id: 4,
+                url: "image4.jpg",
+                name: "Leon P.",
+                theme: "Portrait",
+                likes: 765,
+                liked: false
+            },
+            {
+                id: 5,
+                url: "image5.jpg",
+                name: "Chris T.",
+                theme: "Portrait",
+                likes: 409,
+                liked: false
+            },
+            {
+                id: 6,
+                url: "image6.jpg",
+                name: "Marco Z.",
+                theme: "Portrait",
+                likes: 345,
+                liked: false
+            },
+            {
+                id: 7,
+                url: "image7.jpg",
+                name: "Gracieuse W.",
+                theme: "Portrait",
+                likes: 876,
+                liked: false
+            },
+            {
+                id: 8,
+                url: "image8.jpg",
+                name: "Gilbert T..",
+                theme: "Portrait",
+                likes: 346,
+                liked: false
+            },
+            {
+                id: 9,
+                url: "image9.jpg",
+                name: "Patrick K.",
+                theme: "Portrait",
+                likes: 893,
+                liked: false
+            },
+            {
+                id: 10,
+                url: "image10.jpg",
+                name: "Mimose B.",
+                theme: "Portrait",
+                likes: 543,
+                liked: false
+            },{
+                id: 11,
+                url: "image11.jpg",
+                name: "Ketler N",
+                theme: "Nature",
+                likes: 380,
+                liked: false
+            },
+            {
+                id: 12,
+                url: "image12.jpg",
+                name: "Stacy J",
+                theme: "Paysage",
+                likes: 301,
+                liked: false
+            },
+            {
+                id: 13,
+                url: "image13.jpg",
+                name: "Jules R.",
+                theme: "Portrait",
+                likes: 675,
+                liked: false
+            },
+            {
+                id: 14,
+                url: "image14.jpg",
+                name: "Miriame R.",
+                theme: "Portrait",
+                likes: 490,
+                liked: false
+            },
+            {
+                id: 15,
+                url: "image15.jpg",
+                name: "MiMi J.",
+                theme: "Portrait",
+                likes: 987,
+                liked: false
+            },
+            {
+                id: 16,
+                url: "image16.jpg",
+                name: "Vladimir T.",
+                theme: "Portrait",
+                likes: 457,
+                liked: false
+            },
+            {
+                id: 17,
+                url: "image17.jpg",
+                name: "Julmis D.",
+                theme: "Portrait",
+                likes: 987,
+                liked: false
+            },
+            {
+                id: 18,
+                url: "image18.jpg",
+                name: "Patrick D.",
+                theme: "Portrait",
+                likes: 345,
+                liked: false
+            },
+            {
+                id: 19,
+                url: "image19.jpg",
+                name: "Vlemard D.",
+                theme: "Portrait",
+                likes: 987,
+                liked: false
+            },
+            {
+                id: 20,
+                url: "image20.jpg",
+                name: "Louis Y.",
+                theme: "Portrait",
+                likes: 235,
+                liked: false
+            },
+             {
+                id: 21,
+                url: "image21.jpg",
+                name: "Nelson T",
+                theme: "Nature",
+                likes: 509,
+                liked: false
+            },
+            {
+                id: 22,
+                url: "image22.jpg",
+                name: "Samsom V",
+                theme: "Paysage",
+                likes: 301,
+                liked: false
+            },
+            {
+                id: 23,
+                url: "image23.jpg",
+                name: "Louis Y.",
+                theme: "Portrait",
+                likes: 654,
+                liked: false
+            },
+            {
+                id: 24,
+                url: "image24.jpg",
+                name: "Chris R.",
+                theme: "Portrait",
+                likes: 768,
+                liked: false
+            },
+            {
+                id: 25,
+                url: "image25.jpg",
+                name: "Viviane T.",
+                theme: "Portrait",
+                likes: 234,
+                liked: false
+            },
+            {
+                id: 26,
+                url: "image26.jpg",
+                name: "Milien L.",
+                theme: "Portrait",
+                likes: 678,
+                liked: false
+            },
+            {
+                id: 27,
+                url: "image27.jpg",
+                name: "Varane U.",
+                theme: "Portrait",
+                likes: 987,
+                liked: false
+            },
+            {
+                id: 28,
+                url: "image28.jpg",
+                name: "Potland J.",
+                theme: "Portrait",
+                likes: 321,
+                liked: false
+            },
+            {
+                id: 29,
+                url: "image29.jpg",
+                name: "Joane J.",
+                theme: "Portrait",
+                likes: 657,
+                liked: false
+            },
+            {
+                id: 30,
+                url: "image30.jpg",
+                name: "Biana B.",
+                theme: "Portrait",
+                likes: 280,
+                liked: false
+            },{
+                id: 31,
+                url: "image31.jpg",
+                name: "Raviol L",
+                theme: "Nature",
+                likes: 325,
+                liked: false
+            },
+            {
+                id: 32,
+                url: "image32.jpg",
+                name: "Vales D",
+                theme: "Paysage",
+                likes: 301,
+                liked: false
+            },
+            {
+                id: 33,
+                url: "image33.jpg",
+                name: "Lila P.",
+                theme: "Portrait",
+                likes: 409,
+                liked: false
+            },
+            {
+                id: 34,
+                url: "image34.jpg",
+                name: "Belize Z.",
+                theme: "Portrait",
+                likes: 320,
+                liked: false
+            },
+            {
+                id: 35,
+                url: "image35.jpg",
+                name: "jemima J.",
+                theme: "Portrait",
+                likes: 876,
+                liked: false
+            },
+            {
+                id: 36,
+                url: "image36.jpg",
+                name: "Yvon Y.",
+                theme: "Portrait",
+                likes: 234,
+                liked: false
+            },
+            {
+                id: 37,
+                url: "image37.jpg",
+                name: "Rejeane F.",
+                theme: "Portrait",
+                likes: 453,
+                liked: false
+            },
+            {
+                id: 38,
+                url: "image38.jpg",
+                name: "Danielle T.",
+                theme: "Portrait",
+                likes: 456,
+                liked: false
+            },
+            {
+                id: 39,
+                url: "image39.jpg",
+                name: "Beliz K.",
+                theme: "Portrait",
+                likes: 178,
+                liked: false
+            },
+            {
+                id: 40,
+                url: "image40.jpg",
+                name: "Leon P.",
+                theme: "Portrait",
+                likes: 765,
+                liked: false
+            }
+        ];
+
+        // =============================================
+        // GESTIONNAIRE AUDIO SIMPLIFIÉ
+        // =============================================
+
+        class SimpleSoundManager {
+            constructor() {
+                this.sounds = {
+                    scroll: document.getElementById('scrollSound'),
+                    like: document.getElementById('likeSound'),
+                    share: document.getElementById('shareSound')
+                };
+                this.initialized = false;
+            }
+
+            // Initialisation immédiate et légère
+            init() {
+                if (this.initialized) return;
+                
+                // Préparation basique des sons
+                Object.values(this.sounds).forEach(sound => {
+                    sound.volume = 0.3;
+                });
+                
+                this.sounds.like.volume = 0.6;
+                this.initialized = true;
+            }
+
+            // Lecture avec reset pour répétition rapide
+            play(soundName) {
+                if (!this.initialized || !this.sounds[soundName]) return;
+                
+                try {
+                    const sound = this.sounds[soundName];
+                    sound.currentTime = 0;
+                    sound.play().catch(e => {
+                        console.log('Audio non joué:', e);
+                    });
+                } catch (error) {
+                    console.warn('Erreur son:', error);
+                }
+            }
+        }
+
+        // =============================================
+        // GESTIONNAIRE DE CHARGEMENT
+        // =============================================
+
+        class LoadingManager {
+            constructor() {
+                this.loadingScreen = document.getElementById('loadingScreen');
+                this.mainContainer = document.getElementById('mainContainer');
+            }
+
+            async startLoading() {
+                // Initialisation IMMÉDIATE de Firebase
+                await this.initializeFirebase();
+                
+                // Préparation du DOM
+                this.renderSkeleton();
+                
+                // Initialisation audio IMMÉDIATE et légère
+                window.soundManager.init();
+                
+                // Fin du chargement très rapide
+                setTimeout(() => {
+                    this.completeLoading();
+                }, 800);
+            }
+
+            async initializeFirebase() {
+                return new Promise((resolve) => {
+                    try {
+                        firebase.initializeApp(firebaseConfig);
+                        resolve();
+                    } catch (error) {
+                        console.warn('Firebase:', error);
+                        resolve();
+                    }
+                });
+            }
+
+            renderSkeleton() {
+                const container = document.getElementById('mainContainer');
+                
+                container.innerHTML = photos.map(photo => `
+                    <section class="h-screen w-full snap-section relative" id="photo-${photo.id}">
+                        <div class="image-container w-full h-full">
+                            <div class="image-placeholder">
+                                <i class="fas fa-image text-5xl text-gray-600"></i>
+                            </div>
+                            <img 
+                                data-src="${photo.url}"
+                                alt="Photo de ${photo.name}"
+                                loading="lazy"
+                                class="absolute top-0 left-0 w-full h-full object-cover opacity-0 transition-opacity duration-500"
+                                width="400"
+                                height="600"
+                            >
+                        </div>
+                        
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+                            <div class="flex justify-between items-start flex-wrap gap-4">
+                                <div class="flex-1 min-w-[200px]">
+                                    <div class="flex items-center mb-3">
+                                        <i class="fas fa-user text-gray-300 mr-3 text-lg"></i>
+                                        <span class="font-semibold text-lg">${photo.name}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-tag text-gray-300 mr-3 text-lg"></i>
+                                        <span class="text-gray-300">${photo.theme}</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex-1 min-w-[200px]">
+                                    <div class="flex items-center justify-end space-x-4 mb-3">
+                                        <button class="like-btn flex items-center bg-pink-600 hover:bg-pink-700 px-4 py-2 rounded-full transition-all duration-300 transform hover:scale-105" 
+                                                data-photo-id="${photo.id}">
+                                            <i class="fas fa-heart text-white mr-2"></i>
+                                            <span class="like-count text-white font-semibold">${photo.likes}</span>
+                                        </button>
+                                    </div>
+                                    <button class="share-btn flex items-center justify-center bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-full transition-all duration-300 w-full transform hover:scale-105" 
+                                            data-photo-id="${photo.id}">
+                                        <i class="fas fa-share text-white mr-2"></i>
+                                        <span class="text-white font-semibold">Partager</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                `).join('');
+            }
+
+            completeLoading() {
+                this.loadingScreen.classList.add('fade-out');
+                this.mainContainer.style.opacity = '1';
+                
+                setTimeout(() => {
+                    this.initializeLazyLoading();
+                    this.loadingScreen.remove();
+                }, 800);
+            }
+
+            initializeLazyLoading() {
+                const imageObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            const placeholder = img.previousElementSibling;
+                            
+                            img.src = img.dataset.src;
+                            img.removeAttribute('data-src');
+                            
+                            img.onload = () => {
+                                img.style.opacity = '1';
+                                if (placeholder) {
+                                    placeholder.style.opacity = '0';
+                                    setTimeout(() => {
+                                        placeholder.style.display = 'none';
+                                    }, 500);
+                                }
+                                window.soundManager.play('scroll');
+                            };
+                            
+                            imageObserver.unobserve(img);
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                document.querySelectorAll('img[data-src]').forEach(img => {
+                    imageObserver.observe(img);
+                });
+            }
+        }
+
+        // =============================================
+        // APPLICATION PRINCIPALE
+        // =============================================
+
+        class PhotoApp {
+            constructor() {
+                this.currentPhotoIndex = 0;
+                this.isScrolling = false;
+                this.scrollTimeout = null;
+                this.init();
+            }
+
+            init() {
+                this.attachEventListeners();
+                this.loadLikedState();
+                this.generateRanking();
+                this.handleURLParams();
+                
+                setTimeout(() => {
+                    const scrollIndicator = document.getElementById('scrollIndicator');
+                    if (scrollIndicator) scrollIndicator.style.opacity = '0';
+                }, 3000);
+            }
+
+            attachEventListeners() {
+                const mainContainer = document.getElementById('mainContainer');
+                
+                // Détection du défilement
+                mainContainer.addEventListener('scroll', this.handleScroll.bind(this));
+                
+                // Gestion des clics - DÉLÉGATION D'ÉVÉNEMENTS OPTIMISÉE
+                document.addEventListener('click', (e) => {
+                    // Like button
+                    if (e.target.closest('.like-btn')) {
+                        e.preventDefault();
+                        const photoId = parseInt(e.target.closest('.like-btn').dataset.photoId);
+                        this.handleLike(photoId);
+                        return;
+                    }
+                    
+                    // Share button
+                    if (e.target.closest('.share-btn')) {
+                        e.preventDefault();
+                        const photoId = parseInt(e.target.closest('.share-btn').dataset.photoId);
+                        this.handleShare(photoId);
+                        return;
+                    }
+                });
+
+                // Navigation clavier
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowDown') {
+                        this.scrollToPhoto(this.currentPhotoIndex + 1);
+                    } else if (e.key === 'ArrowUp') {
+                        this.scrollToPhoto(this.currentPhotoIndex - 1);
+                    }
+                });
+
+                // Modal classement
+                document.getElementById('rankingIcon').addEventListener('click', () => {
+                    window.soundManager.play('scroll');
+                    this.showRanking();
+                });
+                document.getElementById('closeModal').addEventListener('click', () => this.hideRanking());
+                document.getElementById('closeModalBtn').addEventListener('click', () => this.hideRanking());
+                
+                this.setupTouchEvents();
+            }
+
+            handleScroll() {
+                if (this.isScrolling) return;
+                this.isScrolling = true;
+                
+                const scrollPosition = document.getElementById('mainContainer').scrollTop;
+                const windowHeight = window.innerHeight;
+                const newIndex = Math.round(scrollPosition / windowHeight);
+                
+                if (newIndex !== this.currentPhotoIndex && newIndex >= 0 && newIndex < photos.length) {
+                    this.currentPhotoIndex = newIndex;
+                    window.soundManager.play('scroll');
+                    this.updateURL();
+                }
+                
+                clearTimeout(this.scrollTimeout);
+                this.scrollTimeout = setTimeout(() => {
+                    this.isScrolling = false;
+                }, 100);
+            }
+
+            scrollToPhoto(index) {
+                if (index < 0 || index >= photos.length) return;
+                this.currentPhotoIndex = index;
+                const targetElement = document.getElementById(`photo-${photos[index].id}`);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                    window.soundManager.play('scroll');
+                    this.updateURL();
+                }
+            }
+
+            handleLike(photoId) {
+                const photo = photos.find(p => p.id === photoId);
+                if (!photo) return;
+                
+                photo.liked = !photo.liked;
+                photo.likes += photo.liked ? 1 : -1;
+                
+                const likeBtn = document.querySelector(`.like-btn[data-photo-id="${photoId}"]`);
+                if (!likeBtn) return;
+                
+                const likeCount = likeBtn.querySelector('.like-count');
+                const heartIcon = likeBtn.querySelector('i');
+                
+                likeCount.textContent = photo.likes;
+                
+                if (photo.liked) {
+                    heartIcon.classList.add('text-red-400', 'like-pulse');
+                    window.soundManager.play('like');
+                } else {
+                    heartIcon.classList.remove('text-red-400');
+                }
+                
+                this.saveLikedState();
+                this.savePhotoData();
+                this.generateRanking();
+
+                firebase.firestore().collection('photos').doc(photoId.toString()).set({
+                    likes: photo.likes,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                }).catch(error => {
+                    console.error('Erreur Firestore:', error);
+                });
+
+                setTimeout(() => {
+                    heartIcon.classList.remove('like-pulse');
+                }, 600);
+            }
+
+            handleShare(photoId) {
+                const photo = photos.find(p => p.id === photoId);
+                if (!photo) return;
+                
+                window.soundManager.play('share');
+                const shareUrl = `${window.location.origin}${window.location.pathname}?photo=${photoId}`;
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: `Photo de ${photo.name}`,
+                        text: `Découvrez cette magnifique photo sur notre galerie! Thème: ${photo.theme}`,
+                        url: shareUrl
+                    });
+                } else {
+                    navigator.clipboard.writeText(shareUrl).then(() => {
+                        alert('Lien copié dans le presse-papiers!');
+                    });
+                }
+            }
+
+            showRanking() {
+                document.getElementById('rankingModal').classList.remove('hidden');
+            }
+
+            hideRanking() {
+                document.getElementById('rankingModal').classList.add('hidden');
+            }
+
+            generateRanking() {
+                const sortedPhotos = [...photos].sort((a, b) => b.likes - a.likes);
+                const rankingList = document.getElementById('rankingList');
+                
+                rankingList.innerHTML = sortedPhotos.map((photo, index) => `
+                    <div class="flex justify-between items-center py-3 px-4 bg-gray-700/50 rounded-lg transition-all duration-300 hover:bg-gray-700/70">
+                        <div class="flex items-center">
+                            <span class="font-bold text-yellow-400 mr-4 w-6 text-center">${index + 1}</span>
+                            <div>
+                                <div class="font-semibold">${photo.name}</div>
+                                <div class="text-sm text-gray-400">${photo.theme}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center text-pink-400 font-semibold">
+                            <i class="fas fa-heart mr-2"></i>
+                            <span>${photo.likes}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            loadLikedState() {
+                const likedPhotos = JSON.parse(localStorage.getItem('likedPhotos') || '{}');
+                photos.forEach(photo => {
+                    photo.liked = !!likedPhotos[photo.id];
+                    const heartIcon = document.querySelector(`.like-btn[data-photo-id="${photo.id}"] i`);
+                    if (heartIcon && photo.liked) {
+                        heartIcon.classList.add('text-red-400');
+                    }
+                });
+            }
+
+            saveLikedState() {
+                const likedPhotos = {};
+                photos.forEach(photo => {
+                    if (photo.liked) {
+                        likedPhotos[photo.id] = true;
+                    }
+                });
+                localStorage.setItem('likedPhotos', JSON.stringify(likedPhotos));
+            }
+
+            savePhotoData() {
+                localStorage.setItem('photosData', JSON.stringify(photos));
+            }
+
+            updateURL() {
+                const currentPhoto = photos[this.currentPhotoIndex];
+                const newURL = `${window.location.origin}${window.location.pathname}?photo=${currentPhoto.id}`;
+                window.history.replaceState({}, '', newURL);
+            }
+
+            handleURLParams() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const photoId = urlParams.get('photo');
+                
+                if (photoId) {
+                    const photoIndex = photos.findIndex(photo => photo.id.toString() === photoId);
+                    if (photoIndex !== -1) {
+                        this.currentPhotoIndex = photoIndex;
+                        this.scrollToPhoto(photoIndex);
+                    }
+                }
+            }
+
+            setupTouchEvents() {
+                let touchStartY = 0;
+                const container = document.getElementById('mainContainer');
+                
+                container.addEventListener('touchstart', e => {
+                    touchStartY = e.changedTouches[0].screenY;
+                }, { passive: true });
+                
+                container.addEventListener('touchend', e => {
+                    const touchEndY = e.changedTouches[0].screenY;
+                    const diff = touchStartY - touchEndY;
+                    const swipeThreshold = 50;
+                    
+                    if (Math.abs(diff) > swipeThreshold) {
+                        if (diff > 0) {
+                            this.scrollToPhoto(this.currentPhotoIndex + 1);
+                        } else {
+                            this.scrollToPhoto(this.currentPhotoIndex - 1);
+                        }
+                    }
+                }, { passive: true });
+            }
+        }
+
+        // =============================================
+        // INITIALISATION
+        // =============================================
+
+        // Créer le gestionnaire audio IMMÉDIATEMENT
+        window.soundManager = new SimpleSoundManager();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialiser l'app
+            window.photoApp = new PhotoApp();
+            
+            // Démarrer le chargement
+            const loadingManager = new LoadingManager();
+            loadingManager.startLoading();
+        });
+
+        window.addEventListener('resize', () => {
+            if (!window.photoApp) return;
+            setTimeout(() => {
+                const scrollPosition = document.getElementById('mainContainer').scrollTop;
+                const windowHeight = window.innerHeight;
+                window.photoApp.currentPhotoIndex = Math.round(scrollPosition / windowHeight);
+            }, 100);
+        });
+    </script>
+</body>
+</html>
