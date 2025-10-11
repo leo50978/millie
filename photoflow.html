@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <script src="https://cdn.counter.dev/script.js" data-id="31788de2-e291-439a-9a6e-f52a51e6eaff" data-utcoffset="-4"></script>
     
     <style>
         .scroll-container {
@@ -184,14 +183,14 @@
         };
 
         // Photos initiales avec données par défaut
-      
-                    const photos = [
+       
+               const photos = [
             {
                 id: 1,
                 url: "image1.jpg",
                 name: "Sarah M.",
                 theme: "Nature",
-                likes: 300,
+                likes: 0,
                 liked: false
             },
             {
@@ -199,7 +198,7 @@
                 url: "image2.jpg",
                 name: "Karim B.",
                 theme: "Paysage",
-                likes: 301,
+                likes: 0,
                 liked: false
             },
             {
@@ -207,7 +206,7 @@
                 url: "image3.jpg",
                 name: "junior509.",
                 theme: "Portrait",
-                likes: 509,
+                likes: 0,
                 liked: false
             },
             {
@@ -215,7 +214,7 @@
                 url: "image4.jpg",
                 name: "Leon P.",
                 theme: "Portrait",
-                likes: 765,
+                likes: 0,
                 liked: false
             },
             {
@@ -223,7 +222,7 @@
                 url: "image5.jpg",
                 name: "Chris T.",
                 theme: "Portrait",
-                likes: 409,
+                likes: 0,
                 liked: false
             },
             {
@@ -231,7 +230,7 @@
                 url: "image6.jpg",
                 name: "Marco Z.",
                 theme: "Portrait",
-                likes: 345,
+                likes: 0,
                 liked: false
             },
             {
@@ -239,7 +238,7 @@
                 url: "image7.jpg",
                 name: "Gracieuse W.",
                 theme: "Portrait",
-                likes: 876,
+                likes: 0,
                 liked: false
             },
             {
@@ -247,7 +246,7 @@
                 url: "image8.jpg",
                 name: "Gilbert T..",
                 theme: "Portrait",
-                likes: 346,
+                likes: 0,
                 liked: false
             },
             {
@@ -255,7 +254,7 @@
                 url: "image9.jpg",
                 name: "Patrick K.",
                 theme: "Portrait",
-                likes: 893,
+                likes: 0,
                 liked: false
             },
             {
@@ -263,14 +262,14 @@
                 url: "image10.jpg",
                 name: "Mimose B.",
                 theme: "Portrait",
-                likes: 543,
+                likes: 0,
                 liked: false
             },{
                 id: 11,
                 url: "image11.jpg",
                 name: "Ketler N",
                 theme: "Nature",
-                likes: 380,
+                likes: 0,
                 liked: false
             },
             {
@@ -278,7 +277,7 @@
                 url: "image12.jpg",
                 name: "Stacy J",
                 theme: "Paysage",
-                likes: 301,
+                likes: 0,
                 liked: false
             },
             {
@@ -294,7 +293,7 @@
                 url: "image14.jpg",
                 name: "Miriame R.",
                 theme: "Portrait",
-                likes: 490,
+                likes: 0,
                 liked: false
             },
             {
@@ -302,7 +301,7 @@
                 url: "image15.jpg",
                 name: "MiMi J.",
                 theme: "Portrait",
-                likes: 987,
+                likes: 0,
                 liked: false
             },
             {
@@ -310,7 +309,7 @@
                 url: "image16.jpg",
                 name: "Vladimir T.",
                 theme: "Portrait",
-                likes: 457,
+                likes: 0,
                 liked: false
             },
             {
@@ -318,7 +317,7 @@
                 url: "image17.jpg",
                 name: "Julmis D.",
                 theme: "Portrait",
-                likes: 987,
+                likes: 0,
                 liked: false
             },
             {
@@ -326,7 +325,7 @@
                 url: "image18.jpg",
                 name: "Patrick D.",
                 theme: "Portrait",
-                likes: 345,
+                likes: 0,
                 liked: false
             },
             {
@@ -334,7 +333,7 @@
                 url: "image19.jpg",
                 name: "Vlemard D.",
                 theme: "Portrait",
-                likes: 987,
+                likes: 0,
                 liked: false
             },
             {
@@ -342,7 +341,7 @@
                 url: "image20.jpg",
                 name: "Louis Y.",
                 theme: "Portrait",
-                likes: 235,
+                likes: 0,
                 liked: false
             },
              {
@@ -350,7 +349,7 @@
                 url: "image21.jpg",
                 name: "Nelson T",
                 theme: "Nature",
-                likes: 509,
+                likes: 0,
                 liked: false
             },
             {
@@ -358,7 +357,7 @@
                 url: "image22.jpg",
                 name: "Samsom V",
                 theme: "Paysage",
-                likes: 301,
+                likes: 0,
                 liked: false
             },
             {
@@ -366,7 +365,7 @@
                 url: "image23.jpg",
                 name: "Louis Y.",
                 theme: "Portrait",
-                likes: 654,
+                likes: 0,
                 liked: false
             },
             {
@@ -374,7 +373,7 @@
                 url: "image24.jpg",
                 name: "Chris R.",
                 theme: "Portrait",
-                likes: 768,
+                likes: 0,
                 liked: false
             },
             {
@@ -382,7 +381,7 @@
                 url: "image25.jpg",
                 name: "Viviane T.",
                 theme: "Portrait",
-                likes: 234,
+                likes: 0,
                 liked: false
             },
             {
@@ -390,7 +389,7 @@
                 url: "image26.jpg",
                 name: "Milien L.",
                 theme: "Portrait",
-                likes: 678,
+                likes: 0,
                 liked: false
             },
             {
@@ -398,7 +397,7 @@
                 url: "image27.jpg",
                 name: "Varane U.",
                 theme: "Portrait",
-                likes: 987,
+                likes: 0,
                 liked: false
             },
             {
@@ -406,7 +405,7 @@
                 url: "image28.jpg",
                 name: "Potland J.",
                 theme: "Portrait",
-                likes: 321,
+                likes: 0,
                 liked: false
             },
             {
@@ -414,7 +413,7 @@
                 url: "image29.jpg",
                 name: "Joane J.",
                 theme: "Portrait",
-                likes: 657,
+                likes: 0,
                 liked: false
             },
             {
@@ -422,14 +421,14 @@
                 url: "image30.jpg",
                 name: "Biana B.",
                 theme: "Portrait",
-                likes: 280,
+                likes: 0,
                 liked: false
             },{
                 id: 31,
                 url: "image31.jpg",
                 name: "Raviol L",
                 theme: "Nature",
-                likes: 325,
+                likes: 0,
                 liked: false
             },
             {
@@ -437,7 +436,7 @@
                 url: "image32.jpg",
                 name: "Vales D",
                 theme: "Paysage",
-                likes: 301,
+                likes: 0,
                 liked: false
             },
             {
@@ -445,7 +444,7 @@
                 url: "image33.jpg",
                 name: "Lila P.",
                 theme: "Portrait",
-                likes: 409,
+                likes: 0,
                 liked: false
             },
             {
@@ -453,7 +452,7 @@
                 url: "image34.jpg",
                 name: "Belize Z.",
                 theme: "Portrait",
-                likes: 320,
+                likes: 0,
                 liked: false
             },
             {
@@ -461,7 +460,7 @@
                 url: "image35.jpg",
                 name: "jemima J.",
                 theme: "Portrait",
-                likes: 876,
+                likes: 0,
                 liked: false
             },
             {
@@ -469,7 +468,7 @@
                 url: "image36.jpg",
                 name: "Yvon Y.",
                 theme: "Portrait",
-                likes: 234,
+                likes: 0,
                 liked: false
             },
              {
@@ -477,7 +476,7 @@
                 url: "kervensphoto1.jpeg",
                 name: "Kervens234.",
                 theme: "food",
-                likes:45,
+                likes:0,
                 liked: false
             },
             {
@@ -485,7 +484,7 @@
                 url: "master1.jpeg",
                 name: "Master Dave.",
                 theme: "Nou vin pou champion ",
-                likes:34,
+                likes:0,
                 liked: false
             },
               {
@@ -493,7 +492,7 @@
                 url: "cadet1.jpeg",
                 name: "Cadet Calendy.",
                 theme: "Limyè a Se Mwen ",
-                likes:29,
+                likes:0,
                 liked: false
             },
             {
@@ -501,7 +500,7 @@
                 url: "image37.jpg",
                 name: "Rejeane F.",
                 theme: "Portrait",
-                likes: 453,
+                likes:0,
                 liked: false
             },
             {
@@ -509,7 +508,7 @@
                 url: "image38.jpg",
                 name: "Danielle T.",
                 theme: "Portrait",
-                likes: 456,
+                likes:0,
                 liked: false
             },
             {
@@ -517,7 +516,7 @@
                 url: "image39.jpg",
                 name: "Beliz K.",
                 theme: "Portrait",
-                likes: 178,
+                likes: 0,
                 liked: false
             },
             {
@@ -525,10 +524,11 @@
                 url: "image40.jpg",
                 name: "Leon P.",
                 theme: "Portrait",
-                likes: 765,
+                likes: 0,
                 liked: false
             }
         ];
+
 
         // =============================================
         // GESTIONNAIRE AUDIO SIMPLIFIÉ
@@ -544,11 +544,9 @@
                 this.initialized = false;
             }
 
-            // Initialisation immédiate et légère
             init() {
                 if (this.initialized) return;
                 
-                // Préparation basique des sons
                 Object.values(this.sounds).forEach(sound => {
                     sound.volume = 0.3;
                 });
@@ -557,7 +555,6 @@
                 this.initialized = true;
             }
 
-            // Lecture avec reset pour répétition rapide
             play(soundName) {
                 if (!this.initialized || !this.sounds[soundName]) return;
                 
@@ -585,22 +582,14 @@
             }
 
             async startLoading() {
-                // Récupérer l'ID de la photo cible depuis l'URL
                 this.targetPhotoId = this.getTargetPhotoIdFromURL();
                 
-                // Initialisation IMMÉDIATE de Firebase
                 await this.initializeFirebase();
-                
-                // Charger les données depuis Firebase
                 await this.loadPhotosFromFirebase();
-                
-                // Préparation du DOM
                 this.renderPhotos();
                 
-                // Initialisation audio IMMÉDIATE et légère
                 window.soundManager.init();
                 
-                // Fin du chargement
                 setTimeout(() => {
                     this.completeLoading();
                 }, 800);
@@ -628,19 +617,18 @@
                 try {
                     const db = firebase.firestore();
                     
-                    // Pour chaque photo, récupérer les données depuis Firebase
                     for (let photo of photos) {
                         const docRef = db.collection('photos').doc(photo.id.toString());
                         const doc = await docRef.get();
                         
                         if (doc.exists) {
-                            // Mettre à jour le compteur de likes depuis Firebase
-                            photo.likes = doc.data().likes || 0;
+                            photo.likes = doc.data().totalLikes || 0;
                         } else {
-                            // Initialiser la photo dans Firebase
                             await docRef.set({
-                                likes: photo.likes,
-                                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                                url: photo.url,
+                                name: photo.name,
+                                theme: photo.theme,
+                                totalLikes: photo.likes
                             });
                         }
                     }
@@ -708,23 +696,22 @@
                 setTimeout(() => {
                     this.initializeLazyLoading();
                     
-                    // Faire défiler automatiquement vers la photo cible si spécifiée
                     if (this.targetPhotoId) {
                         this.scrollToTargetPhoto();
                     }
                     
+                    // Charger l'état des likes après le rendu
+                    window.photoApp.loadLikedState();
                     this.loadingScreen.remove();
                 }, 800);
             }
 
             scrollToTargetPhoto() {
-                // Attendre que le DOM soit complètement chargé
                 setTimeout(() => {
                     const targetElement = document.getElementById(`photo-${this.targetPhotoId}`);
                     if (targetElement) {
                         targetElement.scrollIntoView({ behavior: 'smooth' });
                         
-                        // Mettre à jour l'index de photo courant
                         const photoIndex = photos.findIndex(p => p.id === this.targetPhotoId);
                         if (photoIndex !== -1) {
                             window.photoApp.currentPhotoIndex = photoIndex;
@@ -779,24 +766,15 @@
 
             init() {
                 this.attachEventListeners();
-                this.loadLikedState();
                 this.generateRanking();
-                
-                setTimeout(() => {
-                    const scrollIndicator = document.getElementById('scrollIndicator');
-                    if (scrollIndicator) scrollIndicator.style.opacity = '0';
-                }, 3000);
             }
 
             attachEventListeners() {
                 const mainContainer = document.getElementById('mainContainer');
                 
-                // Détection du défilement
                 mainContainer.addEventListener('scroll', this.handleScroll.bind(this));
                 
-                // Gestion des clics - DÉLÉGATION D'ÉVÉNEMENTS OPTIMISÉE
                 document.addEventListener('click', (e) => {
-                    // Like button
                     if (e.target.closest('.like-btn')) {
                         e.preventDefault();
                         const photoId = parseInt(e.target.closest('.like-btn').dataset.photoId);
@@ -804,7 +782,6 @@
                         return;
                     }
                     
-                    // Share button
                     if (e.target.closest('.share-btn')) {
                         e.preventDefault();
                         const photoId = parseInt(e.target.closest('.share-btn').dataset.photoId);
@@ -813,7 +790,6 @@
                     }
                 });
 
-                // Navigation clavier
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'ArrowDown') {
                         this.scrollToPhoto(this.currentPhotoIndex + 1);
@@ -822,7 +798,6 @@
                     }
                 });
 
-                // Modal classement
                 document.getElementById('rankingIcon').addEventListener('click', () => {
                     window.soundManager.play('scroll');
                     this.showRanking();
@@ -831,6 +806,110 @@
                 document.getElementById('closeModalBtn').addEventListener('click', () => this.hideRanking());
                 
                 this.setupTouchEvents();
+            }
+
+            async loadLikedState() {
+                let userId = localStorage.getItem('anonymousUserId');
+                if (!userId) return;
+
+                const db = firebase.firestore();
+                
+                for (let photo of photos) {
+                    try {
+                        const userLikeRef = db.collection('photos').doc(photo.id.toString()).collection('likes').doc(userId);
+                        const likeDoc = await userLikeRef.get();
+                        
+                        photo.liked = likeDoc.exists;
+                        
+                        const likeBtn = document.querySelector(`.like-btn[data-photo-id="${photo.id}"]`);
+                        const heartIcon = likeBtn?.querySelector('i');
+                        
+                        if (likeBtn && heartIcon) {
+                            if (photo.liked) {
+                                likeBtn.classList.add('liked');
+                                heartIcon.classList.add('text-red-400');
+                            } else {
+                                likeBtn.classList.remove('liked');
+                                heartIcon.classList.remove('text-red-400');
+                            }
+                        }
+                    } catch (error) {
+                        console.error(`Erreur chargement like photo ${photo.id}:`, error);
+                    }
+                }
+            }
+
+            async handleLike(photoId) {
+                let userId = localStorage.getItem('anonymousUserId');
+                if (!userId) {
+                    userId = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem('anonymousUserId', userId);
+                }
+
+                const db = firebase.firestore();
+                const photoRef = db.collection('photos').doc(photoId.toString());
+                const userLikeRef = photoRef.collection('likes').doc(userId);
+
+                try {
+                    await db.runTransaction(async (transaction) => {
+                        const userLikeDoc = await transaction.get(userLikeRef);
+                        const photoDoc = await transaction.get(photoRef);
+                        
+                        if (!photoDoc.exists) {
+                            throw new Error("La photo n'existe pas.");
+                        }
+
+                        const currentLikes = photoDoc.data().totalLikes || 0;
+
+                        if (userLikeDoc.exists) {
+                            // UNLIKE
+                            transaction.delete(userLikeRef);
+                            transaction.update(photoRef, {
+                                totalLikes: currentLikes - 1
+                            });
+                        } else {
+                            // LIKE
+                            transaction.set(userLikeRef, {
+                                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                            transaction.update(photoRef, {
+                                totalLikes: currentLikes + 1
+                            });
+                        }
+                    });
+
+                    // Recharger les données
+                    await this.loadPhotoData(photoId);
+                    await this.loadLikedState();
+                    this.generateRanking();
+                    window.soundManager.play('like');
+
+                } catch (error) {
+                    console.error("Erreur lors du like : ", error);
+                }
+            }
+
+            async loadPhotoData(photoId) {
+                try {
+                    const db = firebase.firestore();
+                    const docRef = db.collection('photos').doc(photoId.toString());
+                    const doc = await docRef.get();
+                    
+                    if (doc.exists) {
+                        const photo = photos.find(p => p.id === photoId);
+                        if (photo) {
+                            photo.likes = doc.data().totalLikes || 0;
+                            
+                            // Mettre à jour l'interface
+                            const likeCount = document.querySelector(`.like-btn[data-photo-id="${photoId}"] .like-count`);
+                            if (likeCount) {
+                                likeCount.textContent = photo.likes;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Erreur chargement photo:', error);
+                }
             }
 
             handleScroll() {
@@ -862,62 +941,6 @@
                     window.soundManager.play('scroll');
                     this.updateURL();
                 }
-            }
-
-            async handleLike(photoId) {
-                const photo = photos.find(p => p.id === photoId);
-                if (!photo) return;
-                
-                // Mettre à jour l'état du like
-                photo.liked = !photo.liked;
-                
-                // Mettre à jour le compteur
-                if (photo.liked) {
-                    photo.likes += 1;
-                } else {
-                    photo.likes -= 1;
-                }
-                
-                // Mettre à jour l'interface
-                const likeBtn = document.querySelector(`.like-btn[data-photo-id="${photoId}"]`);
-                if (!likeBtn) return;
-                
-                const likeCount = likeBtn.querySelector('.like-count');
-                const heartIcon = likeBtn.querySelector('i');
-                
-                likeCount.textContent = photo.likes;
-                
-                if (photo.liked) {
-                    likeBtn.classList.add('liked');
-                    heartIcon.classList.add('text-red-400', 'like-pulse');
-                } else {
-                    likeBtn.classList.remove('liked');
-                    heartIcon.classList.remove('text-red-400');
-                }
-                
-                // Jouer le son
-                window.soundManager.play('like');
-                
-                // Sauvegarder l'état local
-                this.saveLikedState();
-                
-                // Mettre à jour Firebase
-                try {
-                    await firebase.firestore().collection('photos').doc(photoId.toString()).set({
-                        likes: photo.likes,
-                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                } catch (error) {
-                    console.error('Erreur Firestore:', error);
-                }
-                
-                // Mettre à jour le classement
-                this.generateRanking();
-
-                // Retirer l'animation après un délai
-                setTimeout(() => {
-                    heartIcon.classList.remove('like-pulse');
-                }, 600);
             }
 
             handleShare(photoId) {
@@ -969,38 +992,6 @@
                 `).join('');
             }
 
-            loadLikedState() {
-                // Charger les likes de l'utilisateur depuis localStorage
-                const likedPhotos = JSON.parse(localStorage.getItem('likedPhotos') || '{}');
-                
-                // Mettre à jour l'état des photos
-                photos.forEach(photo => {
-                    photo.liked = !!likedPhotos[photo.id];
-                    
-                    // Mettre à jour l'interface si nécessaire
-                    if (photo.liked) {
-                        const likeBtn = document.querySelector(`.like-btn[data-photo-id="${photo.id}"]`);
-                        const heartIcon = document.querySelector(`.like-btn[data-photo-id="${photo.id}"] i`);
-                        
-                        if (likeBtn && heartIcon) {
-                            likeBtn.classList.add('liked');
-                            heartIcon.classList.add('text-red-400');
-                        }
-                    }
-                });
-            }
-
-            saveLikedState() {
-                // Sauvegarder les likes de l'utilisateur dans localStorage
-                const likedPhotos = {};
-                photos.forEach(photo => {
-                    if (photo.liked) {
-                        likedPhotos[photo.id] = true;
-                    }
-                });
-                localStorage.setItem('likedPhotos', JSON.stringify(likedPhotos));
-            }
-
             updateURL() {
                 const currentPhoto = photos[this.currentPhotoIndex];
                 const newURL = `${window.location.origin}${window.location.pathname}?photo=${currentPhoto.id}`;
@@ -1035,14 +1026,11 @@
         // INITIALISATION
         // =============================================
 
-        // Créer le gestionnaire audio IMMÉDIATEMENT
         window.soundManager = new SimpleSoundManager();
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialiser l'app
             window.photoApp = new PhotoApp();
             
-            // Démarrer le chargement
             const loadingManager = new LoadingManager();
             loadingManager.startLoading();
         });
